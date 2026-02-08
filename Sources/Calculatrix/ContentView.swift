@@ -1,169 +1,208 @@
 import SwiftUI
 import CalculatrixModel
 
-enum ContentTab: String, Hashable {
-    case welcome, home, settings
-}
-
+/// The main calculator view with display and button grid.
 struct ContentView: View {
-    @AppStorage("tab") var tab = ContentTab.welcome
-    @AppStorage("name") var welcomeName = "Skipper"
-    @AppStorage("appearance") var appearance = ""
-    @State var viewModel = ViewModel()
+    @State var calculator = CalculatorModel()
 
     var body: some View {
-        TabView(selection: $tab) {
-            NavigationStack {
-                WelcomeView(welcomeName: $welcomeName)
-            }
-            .tabItem { Label("Welcome", systemImage: "heart.fill") }
-            .tag(ContentTab.welcome)
+        GeometryReader { geometry in
+            let spacing: CGFloat = 12
+            let buttonSize = (geometry.size.width - spacing * 5) / 4
 
-            NavigationStack {
-                ItemListView()
-                    .navigationTitle(Text("\(viewModel.items.count) Items"))
-            }
-            .tabItem { Label("Home", systemImage: "house.fill") }
-            .tag(ContentTab.home)
+            VStack(spacing: spacing) {
+                Spacer()
 
-            NavigationStack {
-                SettingsView(appearance: $appearance, welcomeName: $welcomeName)
-                    .navigationTitle("Settings")
-            }
-            .tabItem { Label("Settings", systemImage: "gearshape.fill") }
-            .tag(ContentTab.settings)
-        }
-        .environment(viewModel)
-        .preferredColorScheme(appearance == "dark" ? .dark : appearance == "light" ? .light : nil)
-    }
-}
+                // Display
+                HStack {
+                    Spacer()
+                    Text(calculator.displayText)
+                        .font(.system(size: 64))
+                        .fontWeight(.light)
+                        .foregroundStyle(.white)
+                        .minimumScaleFactor(0.3)
+                        .lineLimit(1)
+                }
+                .padding(.horizontal, spacing)
+                .padding(.bottom, 8)
 
-struct WelcomeView : View {
-    @State var heartBeating = false
-    @Binding var welcomeName: String
+                // Row 1: AC/C, ±, %, ÷
+                HStack(spacing: spacing) {
+                    CalculatorButton(
+                        label: calculator.isAllClear ? "AC" : "C",
+                        size: buttonSize,
+                        backgroundColor: Color(red: 0.65, green: 0.65, blue: 0.65),
+                        foregroundColor: .black
+                    ) {
+                        calculator.inputClear()
+                    }
+                    CalculatorButton(
+                        label: "±",
+                        size: buttonSize,
+                        backgroundColor: Color(red: 0.65, green: 0.65, blue: 0.65),
+                        foregroundColor: .black
+                    ) {
+                        calculator.inputNegate()
+                    }
+                    CalculatorButton(
+                        label: "%",
+                        size: buttonSize,
+                        backgroundColor: Color(red: 0.65, green: 0.65, blue: 0.65),
+                        foregroundColor: .black
+                    ) {
+                        calculator.inputPercent()
+                    }
+                    CalcOperationButton(
+                        operation: .divide,
+                        label: "÷",
+                        size: buttonSize,
+                        activeOperation: calculator.activeOperation
+                    ) {
+                        calculator.inputOperation(.divide)
+                    }
+                }
 
-    var body: some View {
-        VStack(spacing: 0) {
-            Text("Hello [\(welcomeName)](https://skip.dev)!")
-                .padding()
-            Image(systemName: "heart.fill")
-                .foregroundStyle(.red)
-                .scaleEffect(heartBeating ? 1.5 : 1.0)
-                .animation(.easeInOut(duration: 1).repeatForever(), value: heartBeating)
-                .task { heartBeating = true }
-        }
-        .font(.largeTitle)
-    }
-}
+                // Row 2: 7, 8, 9, ×
+                HStack(spacing: spacing) {
+                    DigitButton(digit: 7, size: buttonSize) { calculator.inputDigit(7) }
+                    DigitButton(digit: 8, size: buttonSize) { calculator.inputDigit(8) }
+                    DigitButton(digit: 9, size: buttonSize) { calculator.inputDigit(9) }
+                    CalcOperationButton(
+                        operation: .multiply,
+                        label: "×",
+                        size: buttonSize,
+                        activeOperation: calculator.activeOperation
+                    ) {
+                        calculator.inputOperation(.multiply)
+                    }
+                }
 
-struct ItemListView : View {
-    @Environment(ViewModel.self) var viewModel: ViewModel
+                // Row 3: 4, 5, 6, −
+                HStack(spacing: spacing) {
+                    DigitButton(digit: 4, size: buttonSize) { calculator.inputDigit(4) }
+                    DigitButton(digit: 5, size: buttonSize) { calculator.inputDigit(5) }
+                    DigitButton(digit: 6, size: buttonSize) { calculator.inputDigit(6) }
+                    CalcOperationButton(
+                        operation: .subtract,
+                        label: "−",
+                        size: buttonSize,
+                        activeOperation: calculator.activeOperation
+                    ) {
+                        calculator.inputOperation(.subtract)
+                    }
+                }
 
-    var body: some View {
-        List {
-            ForEach(viewModel.items) { item in
-                NavigationLink(value: item) {
-                    Label {
-                        Text(item.itemTitle)
-                    } icon: {
-                        if item.favorite {
-                            Image(systemName: "star.fill")
-                                .foregroundStyle(.yellow)
-                        }
+                // Row 4: 1, 2, 3, +
+                HStack(spacing: spacing) {
+                    DigitButton(digit: 1, size: buttonSize) { calculator.inputDigit(1) }
+                    DigitButton(digit: 2, size: buttonSize) { calculator.inputDigit(2) }
+                    DigitButton(digit: 3, size: buttonSize) { calculator.inputDigit(3) }
+                    CalcOperationButton(
+                        operation: .add,
+                        label: "+",
+                        size: buttonSize,
+                        activeOperation: calculator.activeOperation
+                    ) {
+                        calculator.inputOperation(.add)
+                    }
+                }
+
+                // Row 5: 0 (wide), ., =
+                HStack(spacing: spacing) {
+                    CalculatorButton(
+                        label: "0",
+                        size: buttonSize,
+                        isWide: true,
+                        spacing: spacing,
+                        backgroundColor: Color(red: 0.2, green: 0.2, blue: 0.2),
+                        foregroundColor: .white
+                    ) {
+                        calculator.inputDigit(0)
+                    }
+                    CalculatorButton(
+                        label: ".",
+                        size: buttonSize,
+                        backgroundColor: Color(red: 0.2, green: 0.2, blue: 0.2),
+                        foregroundColor: .white
+                    ) {
+                        calculator.inputDecimal()
+                    }
+                    CalculatorButton(
+                        label: "=",
+                        size: buttonSize,
+                        backgroundColor: .orange,
+                        foregroundColor: .white
+                    ) {
+                        calculator.inputEquals()
                     }
                 }
             }
-            .onDelete { offsets in
-                viewModel.items.remove(atOffsets: offsets)
-            }
-            .onMove { fromOffsets, toOffset in
-                viewModel.items.move(fromOffsets: fromOffsets, toOffset: toOffset)
-            }
+            .padding(spacing)
         }
-        .navigationDestination(for: Item.self) { item in
-            ItemView(item: item)
-                .navigationTitle(item.itemTitle)
-        }
-        .toolbar {
-            ToolbarItemGroup {
-                Button {
-                    withAnimation {
-                        viewModel.items.insert(Item(), at: 0)
-                    }
-                } label: {
-                    Label("Add", systemImage: "plus")
-                }
-            }
-        }
+        .background(Color.black)
     }
 }
 
-struct ItemView : View {
-    @State var item: Item
-    @Environment(ViewModel.self) var viewModel: ViewModel
-    @Environment(\.dismiss) var dismiss
+/// A digit button (0-9) with dark gray background.
+struct DigitButton: View {
+    let digit: Int
+    let size: CGFloat
+    let action: () -> Void
 
     var body: some View {
-        Form {
-            TextField("Title", text: $item.title)
-                .textFieldStyle(.roundedBorder)
-            Toggle("Favorite", isOn: $item.favorite)
-            DatePicker("Date", selection: $item.date)
-            Text("Notes").font(.title3)
-            TextEditor(text: $item.notes)
-                .border(Color.secondary, width: 1.0)
+        Button(action: action) {
+            Text("\(digit)")
+                .font(.system(size: 32))
+                .foregroundStyle(.white)
+                .frame(width: size, height: size)
+                .background(Color(red: 0.2, green: 0.2, blue: 0.2))
+                .clipShape(Circle())
         }
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
-                    dismiss()
-                }
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Save") {
-                    viewModel.save(item: item)
-                    dismiss()
-                }
-                .disabled(!viewModel.isUpdated(item))
-            }
-        }
+        .buttonStyle(.plain)
     }
 }
 
-struct SettingsView : View {
-    @Binding var appearance: String
-    @Binding var welcomeName: String
+/// An operation button (+, −, ×, ÷) that highlights when active.
+struct CalcOperationButton: View {
+    let operation: CalcOperation
+    let label: String
+    let size: CGFloat
+    let activeOperation: CalcOperation?
+    let action: () -> Void
 
     var body: some View {
-        Form {
-            TextField("Name", text: $welcomeName)
-            Picker("Appearance", selection: $appearance) {
-                Text("System").tag("")
-                Text("Light").tag("light")
-                Text("Dark").tag("dark")
-            }
-            if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
-               let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
-                Text("Version \(version) (\(buildNumber))")
-            }
-            HStack {
-                PlatformHeartView()
-                Text("Powered by [Skip](https://skip.tools)")
-            }
+        let isActive = activeOperation == operation
+        Button(action: action) {
+            Text(label)
+                .font(.system(size: 32))
+                .foregroundStyle(isActive ? .orange : .white)
+                .frame(width: size, height: size)
+                .background(isActive ? Color.white : Color.orange)
+                .clipShape(Circle())
         }
+        .buttonStyle(.plain)
     }
 }
 
-/// A view that shows a blue heart on iOS and a green heart on Android.
-struct PlatformHeartView : View {
+/// A general calculator button with configurable appearance.
+struct CalculatorButton: View {
+    let label: String
+    let size: CGFloat
+    var isWide: Bool = false
+    var spacing: CGFloat = 12
+    let backgroundColor: Color
+    var foregroundColor: Color = .white
+    let action: () -> Void
+
     var body: some View {
-       #if SKIP
-       ComposeView { ctx in // Mix in Compose code!
-           androidx.compose.material3.Text("💚", modifier: ctx.modifier)
-       }
-       #else
-       Text(verbatim: "💙")
-       #endif
+        Button(action: action) {
+            Text(label)
+                .font(.system(size: 32))
+                .foregroundStyle(foregroundColor)
+                .frame(width: isWide ? size * 2 + spacing : size, height: size)
+                .background(backgroundColor)
+                .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
     }
 }

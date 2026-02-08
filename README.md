@@ -1,6 +1,14 @@
 # Calculatrix
 
-This is a [Skip](https://skip.tools) dual-platform app project.
+This is a [Skip](https://skip.dev) dual-platform app project. It was initially created with the command:
+
+```
+skip init --transpiled-app --appid=skip.Calculatrix skipapp-calculatrix Calculatrix CalculatrixModel
+```
+
+This repository is an experiment with using LLM tools to help build a Skip app, using the following prompt:
+
+> Take this empty shell of a Skip app project and implement a full-featured calculator app using SwiftUI. The app should use pure SwiftUI and must not use any UIKit. The SwiftUI used should be compatible with Skip and its transpilation to Jetpack Compose for Android. The app should be split between the Calculatrix module containing the SwiftUI and user interface and the CalculatrixModel module that should contain the logic and observables used by the app. Test cases for the CalculatrixModel should be added to Tests/CalculatrixModelTests/CalculatrixModelTests.swift in the XCTest format. The tests can be validated by running "skip test" and the app can be validated with Skip by running the command: "skip export". Full documentation for Skip is available at https://skip.dev/docs/.
 
 
 <!-- TODO: add iOS screenshots to fastlane metadata
