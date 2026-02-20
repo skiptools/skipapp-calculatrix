@@ -12,9 +12,11 @@ This repository is an experiment with using LLM tools to help build a Skip app, 
 
 ## Screenshots
 
-<img height="800" alt="Calculatrix_iPhone" src="https://github.com/user-attachments/assets/952cb977-10b9-4b9e-aeba-9cd0c8ba3ae3" />
-<img height="800" alt="Calculatrix_Android" src="https://github.com/user-attachments/assets/db30434c-a812-437b-81b8-96b8513258ad" />
+<img height="800" alt="Calculatrix iPhone simple portrait calcuator" src="https://github.com/user-attachments/assets/952cb977-10b9-4b9e-aeba-9cd0c8ba3ae3" />
+<img height="800" alt="Calculatrix Android simple portrait calcuator" src="https://github.com/user-attachments/assets/db30434c-a812-437b-81b8-96b8513258ad" />
 
+<img height="800" alt="Calculatrix iPhone scientific landscape calcuator" src="https://github.com/user-attachments/assets/e28144f8-7785-4fa4-8145-c1514c6c3b40" />
+<img height="800" alt="Calculatrix Android scientific landscape calcuator" src="https://github.com/user-attachments/assets/397aa275-da82-4c68-abb3-50168a501378" />
 
 
 <!-- TODO: add iOS screenshots to fastlane metadata
