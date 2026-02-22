@@ -48,93 +48,114 @@ struct ContentView: View {
                     label: calculator.isAllClear ? "AC" : "C",
                     size: buttonSize,
                     backgroundColor: Color(red: 0.65, green: 0.65, blue: 0.65),
-                    foregroundColor: .black,
-                    accessibilityId: "clear",
-                    accessibilityName: calculator.isAllClear ? "All Clear" : "Clear"
+                    foregroundColor: .black
                 ) {
                     calculator.inputClear()
                 }
+                .accessibilityIdentifier("clear")
+                .accessibilityLabel(calculator.isAllClear ? "All Clear" : "Clear")
+
                 CalculatorButton(
                     label: "±",
                     size: buttonSize,
                     backgroundColor: Color(red: 0.65, green: 0.65, blue: 0.65),
-                    foregroundColor: .black,
-                    accessibilityId: "negate",
-                    accessibilityName: "Negate"
+                    foregroundColor: .black
                 ) {
                     calculator.inputNegate()
                 }
+                .accessibilityIdentifier("negate")
+                .accessibilityLabel("Negate")
+
                 CalculatorButton(
                     label: "%",
                     size: buttonSize,
                     backgroundColor: Color(red: 0.65, green: 0.65, blue: 0.65),
-                    foregroundColor: .black,
-                    accessibilityId: "percent",
-                    accessibilityName: "Percent"
+                    foregroundColor: .black
                 ) {
                     calculator.inputPercent()
                 }
+                .accessibilityIdentifier("percent")
+                .accessibilityLabel("Percent")
+
                 CalcOperationButton(
                     operation: .divide,
                     label: "÷",
                     size: buttonSize,
-                    activeOperation: calculator.activeOperation,
-                    accessibilityId: "divide",
-                    accessibilityName: "Divide"
+                    activeOperation: calculator.activeOperation
                 ) {
                     calculator.inputOperation(.divide)
                 }
+                .accessibilityIdentifier("divide")
+                .accessibilityLabel("Divide")
             }
 
             // Row 2: 7, 8, 9, ×
             HStack(spacing: spacing) {
                 DigitButton(digit: 7, size: buttonSize) { calculator.inputDigit(7) }
+                    .accessibilityIdentifier("digit-7")
+                    .accessibilityLabel("Seven")
                 DigitButton(digit: 8, size: buttonSize) { calculator.inputDigit(8) }
+                    .accessibilityIdentifier("digit-8")
+                    .accessibilityLabel("Eight")
                 DigitButton(digit: 9, size: buttonSize) { calculator.inputDigit(9) }
+                    .accessibilityIdentifier("digit-9")
+                    .accessibilityLabel("Nine")
                 CalcOperationButton(
                     operation: .multiply,
                     label: "×",
                     size: buttonSize,
-                    activeOperation: calculator.activeOperation,
-                    accessibilityId: "multiply",
-                    accessibilityName: "Multiply"
+                    activeOperation: calculator.activeOperation
                 ) {
                     calculator.inputOperation(.multiply)
                 }
+                .accessibilityIdentifier("multiply")
+                .accessibilityLabel("Multiply")
             }
 
             // Row 3: 4, 5, 6, −
             HStack(spacing: spacing) {
                 DigitButton(digit: 4, size: buttonSize) { calculator.inputDigit(4) }
+                    .accessibilityIdentifier("digit-4")
+                    .accessibilityLabel("Four")
                 DigitButton(digit: 5, size: buttonSize) { calculator.inputDigit(5) }
+                    .accessibilityIdentifier("digit-5")
+                    .accessibilityLabel("Five")
                 DigitButton(digit: 6, size: buttonSize) { calculator.inputDigit(6) }
+                    .accessibilityIdentifier("digit-6")
+                    .accessibilityLabel("Six")
                 CalcOperationButton(
                     operation: .subtract,
                     label: "−",
                     size: buttonSize,
-                    activeOperation: calculator.activeOperation,
-                    accessibilityId: "subtract",
-                    accessibilityName: "Subtract"
+                    activeOperation: calculator.activeOperation
                 ) {
                     calculator.inputOperation(.subtract)
                 }
+                .accessibilityIdentifier("subtract")
+                .accessibilityLabel("Subtract")
             }
 
             // Row 4: 1, 2, 3, +
             HStack(spacing: spacing) {
                 DigitButton(digit: 1, size: buttonSize) { calculator.inputDigit(1) }
+                    .accessibilityIdentifier("digit-1")
+                    .accessibilityLabel("One")
                 DigitButton(digit: 2, size: buttonSize) { calculator.inputDigit(2) }
+                    .accessibilityIdentifier("digit-2")
+                    .accessibilityLabel("Two")
                 DigitButton(digit: 3, size: buttonSize) { calculator.inputDigit(3) }
+                    .accessibilityIdentifier("digit-3")
+                    .accessibilityLabel("Three")
                 CalcOperationButton(
                     operation: .add,
                     label: "+",
                     size: buttonSize,
-                    activeOperation: calculator.activeOperation,
-                    accessibilityId: "add",
-                    accessibilityName: "Add"
+                    activeOperation: calculator.activeOperation
                 ) {
                     calculator.inputOperation(.add)
                 }
+                .accessibilityIdentifier("add")
+                .accessibilityLabel("Add")
             }
 
             // Row 5: 0 (wide), ., =
@@ -145,32 +166,34 @@ struct ContentView: View {
                     isWide: true,
                     spacing: spacing,
                     backgroundColor: Color(red: 0.2, green: 0.2, blue: 0.2),
-                    foregroundColor: .white,
-                    accessibilityId: "digit-0",
-                    accessibilityName: "Zero"
+                    foregroundColor: .white
                 ) {
                     calculator.inputDigit(0)
                 }
+                .accessibilityIdentifier("digit-0")
+                .accessibilityLabel("Zero")
+
                 CalculatorButton(
                     label: ".",
                     size: buttonSize,
                     backgroundColor: Color(red: 0.2, green: 0.2, blue: 0.2),
-                    foregroundColor: .white,
-                    accessibilityId: "decimal",
-                    accessibilityName: "Decimal"
+                    foregroundColor: .white
                 ) {
                     calculator.inputDecimal()
                 }
+                .accessibilityIdentifier("decimal")
+                .accessibilityLabel("Decimal")
+
                 CalculatorButton(
                     label: "=",
                     size: buttonSize,
                     backgroundColor: .orange,
-                    foregroundColor: .white,
-                    accessibilityId: "equals",
-                    accessibilityName: "Equals"
+                    foregroundColor: .white
                 ) {
                     calculator.inputEquals()
                 }
+                .accessibilityIdentifier("equals")
+                .accessibilityLabel("Equals")
             }
         }
         .padding(spacing)
@@ -217,169 +240,311 @@ struct ContentView: View {
 
             // Row 1: ( ) mc m+ m- mr | AC ± % ÷
             HStack(spacing: spacing) {
-                SciButton(label: "(", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "open-parenthesis", accessibilityName: "Open Parenthesis") {
+                SciButton(label: "(", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputOpenParenthesis()
                 }
-                SciButton(label: ")", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "close-parenthesis", accessibilityName: "Close Parenthesis") {
+                .accessibilityIdentifier("open-parenthesis")
+                .accessibilityLabel("Open Parenthesis")
+
+                SciButton(label: ")", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputCloseParenthesis()
                 }
-                SciButton(label: "mc", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "memory-clear", accessibilityName: "Memory Clear") {
+                .accessibilityIdentifier("close-parenthesis")
+                .accessibilityLabel("Close Parenthesis")
+
+                SciButton(label: "mc", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.memoryClear()
                 }
-                SciButton(label: "m+", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "memory-add", accessibilityName: "Memory Add") {
+                .accessibilityIdentifier("memory-clear")
+                .accessibilityLabel("Memory Clear")
+
+                SciButton(label: "m+", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.memoryAdd()
                 }
-                SciButton(label: "m-", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "memory-subtract", accessibilityName: "Memory Subtract") {
+                .accessibilityIdentifier("memory-add")
+                .accessibilityLabel("Memory Add")
+
+                SciButton(label: "m-", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.memorySubtract()
                 }
-                SciButton(label: "mr", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "memory-recall", accessibilityName: "Memory Recall") {
+                .accessibilityIdentifier("memory-subtract")
+                .accessibilityLabel("Memory Subtract")
+
+                SciButton(label: "mr", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.memoryRecall()
                 }
-                SciButton(label: calculator.isAllClear ? "AC" : "C", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: funcColor, fg: .black, accessibilityId: "clear", accessibilityName: calculator.isAllClear ? "All Clear" : "Clear") {
+                .accessibilityIdentifier("memory-recall")
+                .accessibilityLabel("Memory Recall")
+
+                SciButton(label: calculator.isAllClear ? "AC" : "C", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: funcColor, fg: .black) {
                     calculator.inputClear()
                 }
-                SciButton(label: "±", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: funcColor, fg: .black, accessibilityId: "negate", accessibilityName: "Negate") {
+                .accessibilityIdentifier("clear")
+                .accessibilityLabel(calculator.isAllClear ? "All Clear" : "Clear")
+
+                SciButton(label: "±", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: funcColor, fg: .black) {
                     calculator.inputNegate()
                 }
-                SciButton(label: "%", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: funcColor, fg: .black, accessibilityId: "percent", accessibilityName: "Percent") {
+                .accessibilityIdentifier("negate")
+                .accessibilityLabel("Negate")
+
+                SciButton(label: "%", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: funcColor, fg: .black) {
                     calculator.inputPercent()
                 }
-                SciOpButton(operation: .divide, label: "÷", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation, accessibilityId: "divide", accessibilityName: "Divide") {
+                .accessibilityIdentifier("percent")
+                .accessibilityLabel("Percent")
+
+                SciOpButton(operation: .divide, label: "÷", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation) {
                     calculator.inputOperation(.divide)
                 }
+                .accessibilityIdentifier("divide")
+                .accessibilityLabel("Divide")
             }
 
             // Row 2: 2nd x² x³ xʸ eˣ 10ˣ/2ˣ | 7 8 9 ×
             HStack(spacing: spacing) {
-                SciButton(label: "2nd", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: is2nd ? Color(red: 0.45, green: 0.45, blue: 0.45) : sciColor, accessibilityId: "second-function", accessibilityName: "Second Function") {
+                SciButton(label: "2nd", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: is2nd ? Color(red: 0.45, green: 0.45, blue: 0.45) : sciColor) {
                     calculator.toggleSecondFunction()
                 }
-                SciButton(label: "x²", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "x-squared", accessibilityName: "X Squared") {
+                .accessibilityIdentifier("second-function")
+                .accessibilityLabel("Second Function")
+
+                SciButton(label: "x²", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary("x²")
                 }
-                SciButton(label: "x³", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "x-cubed", accessibilityName: "X Cubed") {
+                .accessibilityIdentifier("x-squared")
+                .accessibilityLabel("X Squared")
+
+                SciButton(label: "x³", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary("x³")
                 }
-                SciOpButton(operation: .power, label: "xʸ", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation, accessibilityId: "power", accessibilityName: "Power") {
+                .accessibilityIdentifier("x-cubed")
+                .accessibilityLabel("X Cubed")
+
+                SciOpButton(operation: .power, label: "xʸ", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation) {
                     calculator.inputOperation(.power)
                 }
-                SciButton(label: "eˣ", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "e-to-x", accessibilityName: "E to the Power of X") {
+                .accessibilityIdentifier("power")
+                .accessibilityLabel("Power")
+
+                SciButton(label: "eˣ", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary("eˣ")
                 }
-                SciButton(label: is2nd ? "2ˣ" : "10ˣ", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: is2nd ? "two-to-x" : "ten-to-x", accessibilityName: is2nd ? "Two to the Power of X" : "Ten to the Power of X") {
+                .accessibilityIdentifier("e-to-x")
+                .accessibilityLabel("E to the Power of X")
+
+                SciButton(label: is2nd ? "2ˣ" : "10ˣ", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary(is2nd ? "2ˣ" : "10ˣ")
                 }
-                SciButton(label: "7", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "digit-7", accessibilityName: "Seven") {
+                .accessibilityIdentifier(is2nd ? "two-to-x" : "ten-to-x")
+                .accessibilityLabel(is2nd ? "Two to the Power of X" : "Ten to the Power of X")
+
+                SciButton(label: "7", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputDigit(7)
                 }
-                SciButton(label: "8", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "digit-8", accessibilityName: "Eight") {
+                .accessibilityIdentifier("digit-7")
+                .accessibilityLabel("Seven")
+
+                SciButton(label: "8", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputDigit(8)
                 }
-                SciButton(label: "9", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "digit-9", accessibilityName: "Nine") {
+                .accessibilityIdentifier("digit-8")
+                .accessibilityLabel("Eight")
+
+                SciButton(label: "9", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputDigit(9)
                 }
-                SciOpButton(operation: .multiply, label: "×", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation, accessibilityId: "multiply", accessibilityName: "Multiply") {
+                .accessibilityIdentifier("digit-9")
+                .accessibilityLabel("Nine")
+
+                SciOpButton(operation: .multiply, label: "×", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation) {
                     calculator.inputOperation(.multiply)
                 }
+                .accessibilityIdentifier("multiply")
+                .accessibilityLabel("Multiply")
             }
 
             // Row 3: 1/x √x ³√x ʸ√x ln log₁₀/log₂ | 4 5 6 −
             HStack(spacing: spacing) {
-                SciButton(label: "1/x", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "reciprocal", accessibilityName: "Reciprocal") {
+                SciButton(label: "1/x", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary("1/x")
                 }
-                SciButton(label: "√x", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "square-root", accessibilityName: "Square Root") {
+                .accessibilityIdentifier("reciprocal")
+                .accessibilityLabel("Reciprocal")
+
+                SciButton(label: "√x", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary("√x")
                 }
-                SciButton(label: "³√x", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "cube-root", accessibilityName: "Cube Root") {
+                .accessibilityIdentifier("square-root")
+                .accessibilityLabel("Square Root")
+
+                SciButton(label: "³√x", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary("³√x")
                 }
-                SciOpButton(operation: .yRoot, label: "ʸ√x", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation, accessibilityId: "y-root", accessibilityName: "Y Root of X") {
+                .accessibilityIdentifier("cube-root")
+                .accessibilityLabel("Cube Root")
+
+                SciOpButton(operation: .yRoot, label: "ʸ√x", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation) {
                     calculator.inputOperation(.yRoot)
                 }
-                SciButton(label: "ln", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "natural-log", accessibilityName: "Natural Logarithm") {
+                .accessibilityIdentifier("y-root")
+                .accessibilityLabel("Y Root of X")
+
+                SciButton(label: "ln", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary("ln")
                 }
-                SciButton(label: is2nd ? "log₂" : "log₁₀", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: is2nd ? "log-base-2" : "log-base-10", accessibilityName: is2nd ? "Log Base Two" : "Log Base Ten") {
+                .accessibilityIdentifier("natural-log")
+                .accessibilityLabel("Natural Logarithm")
+
+                SciButton(label: is2nd ? "log₂" : "log₁₀", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary(is2nd ? "log₂" : "log₁₀")
                 }
-                SciButton(label: "4", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "digit-4", accessibilityName: "Four") {
+                .accessibilityIdentifier(is2nd ? "log-base-2" : "log-base-10")
+                .accessibilityLabel(is2nd ? "Log Base Two" : "Log Base Ten")
+
+                SciButton(label: "4", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputDigit(4)
                 }
-                SciButton(label: "5", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "digit-5", accessibilityName: "Five") {
+                .accessibilityIdentifier("digit-4")
+                .accessibilityLabel("Four")
+
+                SciButton(label: "5", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputDigit(5)
                 }
-                SciButton(label: "6", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "digit-6", accessibilityName: "Six") {
+                .accessibilityIdentifier("digit-5")
+                .accessibilityLabel("Five")
+
+                SciButton(label: "6", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputDigit(6)
                 }
-                SciOpButton(operation: .subtract, label: "−", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation, accessibilityId: "subtract", accessibilityName: "Subtract") {
+                .accessibilityIdentifier("digit-6")
+                .accessibilityLabel("Six")
+
+                SciOpButton(operation: .subtract, label: "−", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation) {
                     calculator.inputOperation(.subtract)
                 }
+                .accessibilityIdentifier("subtract")
+                .accessibilityLabel("Subtract")
             }
 
             // Row 4: x! sin/sin⁻¹ cos/cos⁻¹ tan/tan⁻¹ e EE | 1 2 3 +
             HStack(spacing: spacing) {
-                SciButton(label: "x!", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "factorial", accessibilityName: "Factorial") {
+                SciButton(label: "x!", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary("x!")
                 }
-                SciButton(label: is2nd ? "sin⁻¹" : "sin", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: is2nd ? "arc-sine" : "sine", accessibilityName: is2nd ? "Arc Sine" : "Sine") {
+                .accessibilityIdentifier("factorial")
+                .accessibilityLabel("Factorial")
+
+                SciButton(label: is2nd ? "sin⁻¹" : "sin", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary(is2nd ? "sin⁻¹" : "sin")
                 }
-                SciButton(label: is2nd ? "cos⁻¹" : "cos", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: is2nd ? "arc-cosine" : "cosine", accessibilityName: is2nd ? "Arc Cosine" : "Cosine") {
+                .accessibilityIdentifier(is2nd ? "arc-sine" : "sine")
+                .accessibilityLabel(is2nd ? "Arc Sine" : "Sine")
+
+                SciButton(label: is2nd ? "cos⁻¹" : "cos", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary(is2nd ? "cos⁻¹" : "cos")
                 }
-                SciButton(label: is2nd ? "tan⁻¹" : "tan", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: is2nd ? "arc-tangent" : "tangent", accessibilityName: is2nd ? "Arc Tangent" : "Tangent") {
+                .accessibilityIdentifier(is2nd ? "arc-cosine" : "cosine")
+                .accessibilityLabel(is2nd ? "Arc Cosine" : "Cosine")
+
+                SciButton(label: is2nd ? "tan⁻¹" : "tan", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary(is2nd ? "tan⁻¹" : "tan")
                 }
-                SciButton(label: "e", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "euler-number", accessibilityName: "Euler's Number") {
+                .accessibilityIdentifier(is2nd ? "arc-tangent" : "tangent")
+                .accessibilityLabel(is2nd ? "Arc Tangent" : "Tangent")
+
+                SciButton(label: "e", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputConstant("e")
                 }
-                SciOpButton(operation: .ee, label: "EE", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation, accessibilityId: "scientific-notation", accessibilityName: "Scientific Notation") {
+                .accessibilityIdentifier("euler-number")
+                .accessibilityLabel("Euler's Number")
+
+                SciOpButton(operation: .ee, label: "EE", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation) {
                     calculator.inputOperation(.ee)
                 }
-                SciButton(label: "1", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "digit-1", accessibilityName: "One") {
+                .accessibilityIdentifier("scientific-notation")
+                .accessibilityLabel("Scientific Notation")
+
+                SciButton(label: "1", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputDigit(1)
                 }
-                SciButton(label: "2", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "digit-2", accessibilityName: "Two") {
+                .accessibilityIdentifier("digit-1")
+                .accessibilityLabel("One")
+
+                SciButton(label: "2", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputDigit(2)
                 }
-                SciButton(label: "3", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "digit-3", accessibilityName: "Three") {
+                .accessibilityIdentifier("digit-2")
+                .accessibilityLabel("Two")
+
+                SciButton(label: "3", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputDigit(3)
                 }
-                SciOpButton(operation: .add, label: "+", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation, accessibilityId: "add", accessibilityName: "Add") {
+                .accessibilityIdentifier("digit-3")
+                .accessibilityLabel("Three")
+
+                SciOpButton(operation: .add, label: "+", w: buttonWidth, h: buttonHeight, fontSize: fontSize, activeOp: calculator.activeOperation) {
                     calculator.inputOperation(.add)
                 }
+                .accessibilityIdentifier("add")
+                .accessibilityLabel("Add")
             }
 
             // Row 5: Rad sinh/sinh⁻¹ cosh/cosh⁻¹ tanh/tanh⁻¹ π Rand | 0(wide) . =
             HStack(spacing: spacing) {
-                SciButton(label: calculator.useRadians ? "Deg" : "Rad", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "rad-deg-toggle", accessibilityName: calculator.useRadians ? "Switch to Degrees" : "Switch to Radians") {
+                SciButton(label: calculator.useRadians ? "Deg" : "Rad", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.toggleRadDeg()
                 }
-                SciButton(label: is2nd ? "sinh⁻¹" : "sinh", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: is2nd ? "arc-hyperbolic-sine" : "hyperbolic-sine", accessibilityName: is2nd ? "Inverse Hyperbolic Sine" : "Hyperbolic Sine") {
+                .accessibilityIdentifier("rad-deg-toggle")
+                .accessibilityLabel(calculator.useRadians ? "Switch to Degrees" : "Switch to Radians")
+
+                SciButton(label: is2nd ? "sinh⁻¹" : "sinh", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary(is2nd ? "sinh⁻¹" : "sinh")
                 }
-                SciButton(label: is2nd ? "cosh⁻¹" : "cosh", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: is2nd ? "arc-hyperbolic-cosine" : "hyperbolic-cosine", accessibilityName: is2nd ? "Inverse Hyperbolic Cosine" : "Hyperbolic Cosine") {
+                .accessibilityIdentifier(is2nd ? "arc-hyperbolic-sine" : "hyperbolic-sine")
+                .accessibilityLabel(is2nd ? "Inverse Hyperbolic Sine" : "Hyperbolic Sine")
+
+                SciButton(label: is2nd ? "cosh⁻¹" : "cosh", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary(is2nd ? "cosh⁻¹" : "cosh")
                 }
-                SciButton(label: is2nd ? "tanh⁻¹" : "tanh", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: is2nd ? "arc-hyperbolic-tangent" : "hyperbolic-tangent", accessibilityName: is2nd ? "Inverse Hyperbolic Tangent" : "Hyperbolic Tangent") {
+                .accessibilityIdentifier(is2nd ? "arc-hyperbolic-cosine" : "hyperbolic-cosine")
+                .accessibilityLabel(is2nd ? "Inverse Hyperbolic Cosine" : "Hyperbolic Cosine")
+
+                SciButton(label: is2nd ? "tanh⁻¹" : "tanh", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputScientificUnary(is2nd ? "tanh⁻¹" : "tanh")
                 }
-                SciButton(label: "π", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "pi", accessibilityName: "Pi") {
+                .accessibilityIdentifier(is2nd ? "arc-hyperbolic-tangent" : "hyperbolic-tangent")
+                .accessibilityLabel(is2nd ? "Inverse Hyperbolic Tangent" : "Hyperbolic Tangent")
+
+                SciButton(label: "π", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputConstant("π")
                 }
-                SciButton(label: "Rand", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "random", accessibilityName: "Random Number") {
+                .accessibilityIdentifier("pi")
+                .accessibilityLabel("Pi")
+
+                SciButton(label: "Rand", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputConstant("Rand")
                 }
-                SciButton(label: "0", w: buttonWidth * 2 + spacing, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "digit-0", accessibilityName: "Zero") {
+                .accessibilityIdentifier("random")
+                .accessibilityLabel("Random Number")
+
+                SciButton(label: "0", w: buttonWidth * 2 + spacing, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputDigit(0)
                 }
-                SciButton(label: ".", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor, accessibilityId: "decimal", accessibilityName: "Decimal") {
+                .accessibilityIdentifier("digit-0")
+                .accessibilityLabel("Zero")
+
+                SciButton(label: ".", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: sciColor) {
                     calculator.inputDecimal()
                 }
-                SciButton(label: "=", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: .orange, accessibilityId: "equals", accessibilityName: "Equals") {
+                .accessibilityIdentifier("decimal")
+                .accessibilityLabel("Decimal")
+
+                SciButton(label: "=", w: buttonWidth, h: buttonHeight, fontSize: fontSize, bg: .orange) {
                     calculator.inputEquals()
                 }
+                .accessibilityIdentifier("equals")
+                .accessibilityLabel("Equals")
             }
         }
         .padding(spacing)
@@ -404,8 +569,6 @@ struct DigitButton: View {
                 .clipShape(Circle())
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier("digit-\(digit)")
-        .accessibilityLabel("\(digit)")
     }
 }
 
@@ -415,8 +578,6 @@ struct CalcOperationButton: View {
     let label: String
     let size: CGFloat
     let activeOperation: CalcOperation?
-    var accessibilityId: String
-    var accessibilityName: String
     let action: () -> Void
 
     var body: some View {
@@ -430,8 +591,6 @@ struct CalcOperationButton: View {
                 .clipShape(Circle())
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier(accessibilityId)
-        .accessibilityLabel(accessibilityName)
     }
 }
 
@@ -443,8 +602,6 @@ struct CalculatorButton: View {
     var spacing: CGFloat = 12
     let backgroundColor: Color
     var foregroundColor: Color = .white
-    var accessibilityId: String
-    var accessibilityName: String
     let action: () -> Void
 
     var body: some View {
@@ -457,8 +614,6 @@ struct CalculatorButton: View {
                 .clipShape(Capsule())
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier(accessibilityId)
-        .accessibilityLabel(accessibilityName)
     }
 }
 
@@ -472,8 +627,6 @@ struct SciButton: View {
     var fontSize: CGFloat = 16
     var bg: Color = Color(red: 0.2, green: 0.2, blue: 0.2)
     var fg: Color = .white
-    var accessibilityId: String
-    var accessibilityName: String
     let action: () -> Void
 
     var body: some View {
@@ -486,8 +639,6 @@ struct SciButton: View {
                 .clipShape(RoundedRectangle(cornerRadius: h / 4))
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier(accessibilityId)
-        .accessibilityLabel(accessibilityName)
     }
 }
 
@@ -499,8 +650,6 @@ struct SciOpButton: View {
     var h: CGFloat
     var fontSize: CGFloat = 16
     let activeOp: CalcOperation?
-    var accessibilityId: String
-    var accessibilityName: String
     let action: () -> Void
 
     var body: some View {
@@ -514,7 +663,5 @@ struct SciOpButton: View {
                 .clipShape(RoundedRectangle(cornerRadius: h / 4))
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier(accessibilityId)
-        .accessibilityLabel(accessibilityName)
     }
 }
