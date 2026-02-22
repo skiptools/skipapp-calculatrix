@@ -4,7 +4,187 @@
     "%lld" : {
 
     },
+    "Add" : {
+
+    },
+    "All Clear" : {
+
+    },
+    "Arc Cosine" : {
+
+    },
+    "Arc Sine" : {
+
+    },
+    "Arc Tangent" : {
+
+    },
+    "Clear" : {
+
+    },
+    "Close Parenthesis" : {
+
+    },
+    "Cosine" : {
+
+    },
+    "Cube Root" : {
+
+    },
+    "Decimal" : {
+
+    },
+    "Divide" : {
+
+    },
+    "E to the Power of X" : {
+
+    },
+    "Eight" : {
+
+    },
+    "Equals" : {
+
+    },
+    "Euler's Number" : {
+
+    },
+    "Factorial" : {
+
+    },
+    "Five" : {
+
+    },
+    "Four" : {
+
+    },
+    "Hyperbolic Cosine" : {
+
+    },
+    "Hyperbolic Sine" : {
+
+    },
+    "Hyperbolic Tangent" : {
+
+    },
+    "Inverse Hyperbolic Cosine" : {
+
+    },
+    "Inverse Hyperbolic Sine" : {
+
+    },
+    "Inverse Hyperbolic Tangent" : {
+
+    },
+    "Log Base Ten" : {
+
+    },
+    "Log Base Two" : {
+
+    },
+    "Memory Add" : {
+
+    },
+    "Memory Clear" : {
+
+    },
+    "Memory Recall" : {
+
+    },
+    "Memory Subtract" : {
+
+    },
+    "Multiply" : {
+
+    },
+    "Natural Logarithm" : {
+
+    },
+    "Negate" : {
+
+    },
+    "Nine" : {
+
+    },
+    "One" : {
+
+    },
+    "Open Parenthesis" : {
+
+    },
+    "Percent" : {
+
+    },
+    "Pi" : {
+
+    },
+    "Power" : {
+
+    },
     "Rad" : {
+
+    },
+    "Radians mode" : {
+
+    },
+    "Random Number" : {
+
+    },
+    "Reciprocal" : {
+
+    },
+    "Scientific Notation" : {
+
+    },
+    "Second Function" : {
+
+    },
+    "Seven" : {
+
+    },
+    "Sine" : {
+
+    },
+    "Six" : {
+
+    },
+    "Square Root" : {
+
+    },
+    "Subtract" : {
+
+    },
+    "Switch to Degrees" : {
+
+    },
+    "Switch to Radians" : {
+
+    },
+    "Tangent" : {
+
+    },
+    "Ten to the Power of X" : {
+
+    },
+    "Three" : {
+
+    },
+    "Two" : {
+
+    },
+    "Two to the Power of X" : {
+
+    },
+    "X Cubed" : {
+
+    },
+    "X Squared" : {
+
+    },
+    "Y Root of X" : {
+
+    },
+    "Zero" : {
 
     }
   },
