@@ -41,7 +41,7 @@ public enum CalcOperation: String, Hashable {
     public var useRadians: Bool = false
 
     /// The current memory value.
-    public var memory: Double = 0.0
+    public var memory: Real = Real.zero
 
     /// The depth of open parentheses.
     public var parenthesesDepth: Int = 0
@@ -87,21 +87,32 @@ public enum CalcOperation: String, Hashable {
     /// The accumulator for arithmetic in conversion mode.
     private var conversionAccumulator: Double = 0.0
 
-    private var accumulator: Double = 0.0
+    private var accumulator: Real = Real.zero
     private var pendingOperation: CalcOperation? = nil
     private var isEnteringNumber: Bool = false
-    private var lastOperand: Double = 0.0
+    private var lastOperand: Real = Real.zero
     private var lastOperation: CalcOperation? = nil
     private var justEvaluated: Bool = false
+    /// Stores the exact Real from the last computation or constant entry,
+    /// avoiding precision loss from display text round-tripping.
+    private var lastResult: Real? = nil
 
-    private var savedAccumulators: [Double] = []
+    private var savedAccumulators: [Real] = []
     private var savedOperations: [CalcOperation?] = []
 
     public init() {
     }
 
-    /// The numeric value represented by the current display text.
-    public var displayValue: Double {
+    /// The numeric value represented by the current display.
+    /// Uses the stored exact Real when available (e.g., after constants or calculations),
+    /// otherwise parses the display text.
+    public var displayValue: Real {
+        if let lr = lastResult { return lr }
+        return Real.fromDisplayString(displayText)
+    }
+
+    /// The numeric value represented by the current display text as a Double (for conversion mode).
+    public var displayValueDouble: Double {
         return Double(displayText) ?? 0.0
     }
 
@@ -115,6 +126,7 @@ public enum CalcOperation: String, Hashable {
         }
         if displayText == "Error" { inputClear() }
 
+        lastResult = nil
         if isEnteringNumber {
             if displayText == "0" {
                 displayText = "\(digit)"
@@ -146,6 +158,7 @@ public enum CalcOperation: String, Hashable {
         }
         if displayText == "Error" { inputClear() }
 
+        lastResult = nil
         if !isEnteringNumber {
             displayText = "0."
             isEnteringNumber = true
@@ -210,16 +223,17 @@ public enum CalcOperation: String, Hashable {
             return
         }
         if isAllClear {
-            accumulator = 0.0
+            accumulator = Real.zero
             pendingOperation = nil
             lastOperation = nil
-            lastOperand = 0.0
+            lastOperand = Real.zero
             activeOperation = nil
             savedAccumulators = []
             savedOperations = []
             parenthesesDepth = 0
         }
         displayText = "0"
+        lastResult = nil
         isEnteringNumber = false
         isAllClear = true
         justEvaluated = false
@@ -241,8 +255,8 @@ public enum CalcOperation: String, Hashable {
                 isEnteringNumber = true
                 isAllClear = false
             } else {
-                let value = -displayValue
-                displayText = CalculatorModel.formatNumber(value)
+                let value = displayValue.negate()
+                displayText = CalculatorModel.formatReal(value)
             }
             return
         }
@@ -269,13 +283,14 @@ public enum CalcOperation: String, Hashable {
         if displayText == "Error" { return }
 
         let current = displayValue
-        let value: Double
+        let hundred = Real.fromInt(100)
+        let value: Real
         if pendingOperation == .add || pendingOperation == .subtract {
-            value = accumulator * current / 100.0
+            value = accumulator.multiply(current).divide(hundred)
         } else {
-            value = current / 100.0
+            value = current.divide(hundred)
         }
-        displayText = CalculatorModel.formatNumber(value)
+        displayText = CalculatorModel.formatReal(value)
         isEnteringNumber = false
         justEvaluated = true
     }
@@ -298,22 +313,22 @@ public enum CalcOperation: String, Hashable {
 
     /// Clear the memory.
     public func memoryClear() {
-        memory = 0.0
+        memory = Real.zero
     }
 
     /// Add the display value to memory.
     public func memoryAdd() {
-        memory += displayValue
+        memory = memory.add(displayValue)
     }
 
     /// Subtract the display value from memory.
     public func memorySubtract() {
-        memory -= displayValue
+        memory = memory.subtract(displayValue)
     }
 
     /// Recall the memory value to the display.
     public func memoryRecall() {
-        displayText = CalculatorModel.formatNumber(memory)
+        displayText = CalculatorModel.formatReal(memory)
         isEnteringNumber = false
         justEvaluated = true
     }
@@ -326,7 +341,7 @@ public enum CalcOperation: String, Hashable {
         savedAccumulators.append(accumulator)
         savedOperations.append(pendingOperation)
         parenthesesDepth += 1
-        accumulator = 0.0
+        accumulator = Real.zero
         pendingOperation = nil
         activeOperation = nil
         isEnteringNumber = false
@@ -352,7 +367,7 @@ public enum CalcOperation: String, Hashable {
         pendingOperation = savedOperations.removeLast()
         activeOperation = pendingOperation
 
-        displayText = CalculatorModel.formatNumber(subResult)
+        displayText = CalculatorModel.formatReal(subResult)
         isEnteringNumber = false
         justEvaluated = true
         isAllClear = false
@@ -365,75 +380,89 @@ public enum CalcOperation: String, Hashable {
         if displayText == "Error" { return }
 
         let x = displayValue
-        let result: Double
+        let pi180 = Real.piVal.divide(Real.fromInt(180))
+        let r180pi = Real.fromInt(180).divide(Real.piVal)
+        let result: Real
 
+        // Values with .pi property are inherently radian-based (e.g. π, 2π, π/2),
+        // so they bypass degree-to-radian conversion even in degrees mode.
+        let isRadianValue = x.property == .pi
         switch function {
         case "sin":
-            result = sin(useRadians ? x : x * Double.pi / 180.0)
+            let angle = (useRadians || isRadianValue) ? x : x.multiply(pi180)
+            result = Real.sin(angle)
         case "cos":
-            result = cos(useRadians ? x : x * Double.pi / 180.0)
+            let angle = (useRadians || isRadianValue) ? x : x.multiply(pi180)
+            result = Real.cos(angle)
         case "tan":
-            result = tan(useRadians ? x : x * Double.pi / 180.0)
+            let angle = (useRadians || isRadianValue) ? x : x.multiply(pi180)
+            result = Real.tan(angle)
         case "sin⁻¹":
-            let raw = asin(x)
-            result = useRadians ? raw : raw * 180.0 / Double.pi
+            let raw = Real.asin(x)
+            result = useRadians ? raw : raw.multiply(r180pi)
         case "cos⁻¹":
-            let raw = acos(x)
-            result = useRadians ? raw : raw * 180.0 / Double.pi
+            let raw = Real.acos(x)
+            result = useRadians ? raw : raw.multiply(r180pi)
         case "tan⁻¹":
-            let raw = atan(x)
-            result = useRadians ? raw : raw * 180.0 / Double.pi
+            let raw = Real.atan(x)
+            result = useRadians ? raw : raw.multiply(r180pi)
         case "sinh":
-            result = sinh(x)
+            result = Real.sinh(x)
         case "cosh":
-            result = cosh(x)
+            result = Real.cosh(x)
         case "tanh":
-            result = tanh(x)
+            result = Real.tanh(x)
         case "sinh⁻¹":
-            result = asinh(x)
+            result = Real.asinh(x)
         case "cosh⁻¹":
-            result = acosh(x)
+            result = Real.acosh(x)
         case "tanh⁻¹":
-            result = atanh(x)
+            result = Real.atanh(x)
         case "x²":
-            result = x * x
+            result = x.multiply(x)
         case "x³":
-            result = x * x * x
+            result = x.multiply(x).multiply(x)
         case "√x":
-            result = sqrt(x)
+            result = Real.sqrt(x)
         case "³√x":
-            if x >= 0 {
-                result = pow(x, 1.0 / 3.0)
+            if !x.isNegative {
+                result = Real.pow(x, Real.fromBoundedRational(BoundedRational(BigInt.one, BigInt.fromInt(3))))
             } else {
-                result = -pow(-x, 1.0 / 3.0)
+                result = Real.pow(x.absValue(), Real.fromBoundedRational(BoundedRational(BigInt.one, BigInt.fromInt(3)))).negate()
             }
         case "1/x":
-            if x == 0.0 {
+            if x.isZero {
                 displayText = "Error"
                 isEnteringNumber = false
                 isAllClear = true
                 return
             }
-            result = 1.0 / x
+            result = x.reciprocal()
         case "x!":
-            result = CalculatorModel.computeFactorial(x)
+            result = Real.factorial(x)
         case "eˣ":
-            result = exp(x)
+            result = Real.exp_(x)
         case "10ˣ":
-            result = pow(10.0, x)
+            result = Real.pow(Real.ten, x)
         case "2ˣ":
-            result = pow(2.0, x)
+            result = Real.pow(Real.two, x)
         case "ln":
-            result = log(x)
+            result = Real.ln(x)
         case "log₁₀":
-            result = log10(x)
+            result = Real.log10(x)
         case "log₂":
-            result = log(x) / log(2.0)
+            result = Real.log2(x)
         default:
             return
         }
 
-        displayText = CalculatorModel.formatNumber(result)
+        if result.isError {
+            displayText = "Error"
+            lastResult = nil
+        } else {
+            displayText = CalculatorModel.formatReal(result)
+            lastResult = result
+        }
         isEnteringNumber = false
         justEvaluated = true
         isAllClear = false
@@ -445,11 +474,23 @@ public enum CalcOperation: String, Hashable {
     public func inputConstant(_ name: String) {
         switch name {
         case "π":
-            displayText = CalculatorModel.formatNumber(Double.pi)
+            displayText = CalculatorModel.formatReal(Real.piVal)
+            accumulator = Real.piVal
+            lastResult = Real.piVal
+            isEnteringNumber = false
+            justEvaluated = true
+            isAllClear = false
+            return
         case "e":
-            displayText = CalculatorModel.formatNumber(exp(1.0))
+            displayText = CalculatorModel.formatReal(Real.eVal)
+            accumulator = Real.eVal
+            lastResult = Real.eVal
+            isEnteringNumber = false
+            justEvaluated = true
+            isAllClear = false
+            return
         case "Rand":
-            displayText = CalculatorModel.formatNumber(Double.random(in: 0.0...1.0))
+            displayText = CalculatorModel.formatReal(Real.random())
         default:
             return
         }
@@ -514,11 +555,11 @@ public enum CalcOperation: String, Hashable {
         if isEditingSource {
             let value = Double(sourceText) ?? 0.0
             let result = convertValue(value, from: sourceUnit, to: targetUnit)
-            targetText = CalculatorModel.formatNumber(result)
+            targetText = CalculatorModel.formatDouble(result)
         } else {
             let value = Double(targetText) ?? 0.0
             let result = convertValue(value, from: targetUnit, to: sourceUnit)
-            sourceText = CalculatorModel.formatNumber(result)
+            sourceText = CalculatorModel.formatDouble(result)
         }
     }
 
@@ -614,7 +655,7 @@ public enum CalcOperation: String, Hashable {
 
     /// Set the active conversion field's text and update conversion.
     private func setConversionText(_ value: Double) {
-        let text = CalculatorModel.formatNumber(value)
+        let text = CalculatorModel.formatDouble(value)
         if isEditingSource {
             sourceText = text
         } else {
@@ -701,17 +742,17 @@ public enum CalcOperation: String, Hashable {
         performOperation(operation, operand: operand)
     }
 
-    private func performOperation(_ operation: CalcOperation, operand: Double) {
-        let result: Double
+    private func performOperation(_ operation: CalcOperation, operand: Real) {
+        let result: Real
         switch operation {
         case .add:
-            result = accumulator + operand
+            result = accumulator.add(operand)
         case .subtract:
-            result = accumulator - operand
+            result = accumulator.subtract(operand)
         case .multiply:
-            result = accumulator * operand
+            result = accumulator.multiply(operand)
         case .divide:
-            if operand == 0.0 {
+            if operand.isZero {
                 displayText = "Error"
                 isEnteringNumber = false
                 pendingOperation = nil
@@ -719,11 +760,11 @@ public enum CalcOperation: String, Hashable {
                 isAllClear = true
                 return
             }
-            result = accumulator / operand
+            result = accumulator.divide(operand)
         case .power:
-            result = pow(accumulator, operand)
+            result = Real.pow(accumulator, operand)
         case .yRoot:
-            if operand == 0.0 {
+            if operand.isZero {
                 displayText = "Error"
                 isEnteringNumber = false
                 pendingOperation = nil
@@ -731,50 +772,43 @@ public enum CalcOperation: String, Hashable {
                 isAllClear = true
                 return
             }
-            result = pow(accumulator, 1.0 / operand)
+            result = Real.pow(accumulator, operand.reciprocal())
         case .ee:
-            result = accumulator * pow(10.0, operand)
+            result = accumulator.multiply(Real.pow(Real.ten, operand))
+        }
+        if result.isError {
+            displayText = "Error"
+            isEnteringNumber = false
+            pendingOperation = nil
+            activeOperation = nil
+            isAllClear = true
+            return
         }
         accumulator = result
-        displayText = CalculatorModel.formatNumber(result)
-    }
-
-    // MARK: - Factorial Helper
-
-    private static func computeFactorial(_ n: Double) -> Double {
-        if n < 0.0 { return Double.nan }
-        if n == 0.0 || n == 1.0 { return 1.0 }
-        if n != n.rounded(.down) { return Double.nan }
-        if n > 170.0 { return Double.infinity }
-        var result = 1.0
-        let count = Int(n)
-        var i = 2
-        while i <= count {
-            result *= Double(i)
-            i += 1
-        }
-        return result
+        lastResult = result
+        displayText = CalculatorModel.formatReal(result)
     }
 
     // MARK: - Number Formatting
 
-    /// Format a number for display, removing unnecessary trailing zeros
-    /// and using integer format for whole numbers.
-    public static func formatNumber(_ number: Double) -> String {
+    /// Format a Real number for display.
+    public static func formatReal(_ number: Real) -> String {
+        return number.toDisplayString()
+    }
+
+    /// Format a Double for display (used by conversion mode).
+    public static func formatDouble(_ number: Double) -> String {
         if number.isNaN || number.isInfinite {
             return "Error"
         }
         if number == 0.0 {
             return "0"
         }
-        // Whole numbers within display range
-        let isWholeNumber = number == Double(Int64(number))
-        let inRange = number > -1e15 && number < 1e15
-        if isWholeNumber && inRange {
+        let absNumber = number < 0 ? -number : number
+        // Whole numbers within display range — avoid Int64 overflow
+        if absNumber < 1e15 && absNumber == floor(absNumber) {
             return "\(Int64(number))"
         }
-        // Format with up to 9 significant digits, then strip trailing zeros
-        // (Kotlin's String.format pads with zeros unlike Swift, so we strip)
         var str = String(format: "%.9g", number)
         if str.contains(".") && !str.contains("e") && !str.contains("E") {
             while str.hasSuffix("0") {
@@ -785,5 +819,10 @@ public enum CalcOperation: String, Hashable {
             }
         }
         return str
+    }
+
+    /// Backwards-compatible alias for formatDouble.
+    public static func formatNumber(_ number: Double) -> String {
+        return formatDouble(number)
     }
 }

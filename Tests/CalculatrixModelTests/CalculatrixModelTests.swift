@@ -15,7 +15,7 @@ final class CalculatrixModelTests: XCTestCase {
         XCTAssertEqual(calc.displayText, "0")
         XCTAssertTrue(calc.isAllClear)
         XCTAssertNil(calc.activeOperation)
-        XCTAssertEqual(calc.displayValue, 0)
+        XCTAssertTrue(calc.displayValue.isZero)
     }
 
     // MARK: - Digit Input
