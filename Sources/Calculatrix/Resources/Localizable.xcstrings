@@ -1,13 +1,28 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "(%@)" : {
+
+    },
     "%lld" : {
+
+    },
+    "⇅" : {
+
+    },
+    "✓" : {
+
+    },
+    "Acres" : {
 
     },
     "Add" : {
 
     },
     "All Clear" : {
+
+    },
+    "Angles" : {
 
     },
     "Arc Cosine" : {
@@ -17,6 +32,57 @@
 
     },
     "Arc Tangent" : {
+
+    },
+    "Arcminutes" : {
+
+    },
+    "Arcseconds" : {
+
+    },
+    "Area" : {
+
+    },
+    "Ares" : {
+
+    },
+    "Astronomical Units" : {
+
+    },
+    "Atmospheres" : {
+
+    },
+    "Bars" : {
+
+    },
+    "Bits" : {
+
+    },
+    "British Thermal Units" : {
+
+    },
+    "BTU per Hour" : {
+
+    },
+    "Bytes" : {
+
+    },
+    "Calories" : {
+
+    },
+    "Carats" : {
+
+    },
+    "Celsius" : {
+
+    },
+    "Centiliters" : {
+
+    },
+    "Centimeters" : {
+
+    },
+    "Centuries" : {
 
     },
     "Clear" : {
@@ -31,10 +97,49 @@
     "Cube Root" : {
 
     },
+    "Cubic Centimeters" : {
+
+    },
+    "Cubic Feet" : {
+
+    },
+    "Cubic Inches" : {
+
+    },
+    "Cubic Meters" : {
+
+    },
+    "Cubic Yards" : {
+
+    },
+    "Data" : {
+
+    },
+    "Days" : {
+
+    },
+    "Decades" : {
+
+    },
+    "Deciliters" : {
+
+    },
     "Decimal" : {
 
     },
+    "Decimeters" : {
+
+    },
+    "Degrees" : {
+
+    },
     "Divide" : {
+
+    },
+    "Done" : {
+
+    },
+    "Dynes" : {
 
     },
     "E to the Power of X" : {
@@ -43,7 +148,16 @@
     "Eight" : {
 
     },
+    "Electronvolts" : {
+
+    },
+    "Energy" : {
+
+    },
     "Equals" : {
+
+    },
+    "Ergs" : {
 
     },
     "Euler's Number" : {
@@ -52,10 +166,76 @@
     "Factorial" : {
 
     },
+    "Fahrenheit" : {
+
+    },
+    "Fathoms" : {
+
+    },
+    "Feet" : {
+
+    },
+    "Feet per Second" : {
+
+    },
     "Five" : {
 
     },
+    "Foot-pounds" : {
+
+    },
+    "Foot-pounds per Second" : {
+
+    },
+    "Force" : {
+
+    },
+    "Fortnights" : {
+
+    },
     "Four" : {
+
+    },
+    "Fuel" : {
+
+    },
+    "Furlongs" : {
+
+    },
+    "Gibibits" : {
+
+    },
+    "Gibibytes" : {
+
+    },
+    "Gigabits" : {
+
+    },
+    "Gigabytes" : {
+
+    },
+    "Gigawatts" : {
+
+    },
+    "Gradians" : {
+
+    },
+    "Grains" : {
+
+    },
+    "Grams" : {
+
+    },
+    "Hectares" : {
+
+    },
+    "Hectopascals" : {
+
+    },
+    "Horsepower" : {
+
+    },
+    "Hours" : {
 
     },
     "Hyperbolic Cosine" : {
@@ -67,6 +247,33 @@
     "Hyperbolic Tangent" : {
 
     },
+    "Imperial Fluid Ounces" : {
+
+    },
+    "Imperial Gallons" : {
+
+    },
+    "Imperial Pints" : {
+
+    },
+    "Imperial Quarts" : {
+
+    },
+    "Imperial Tablespoons" : {
+
+    },
+    "Imperial Teaspoons" : {
+
+    },
+    "Inches" : {
+
+    },
+    "Inches of Mercury" : {
+
+    },
+    "Inches of Water" : {
+
+    },
     "Inverse Hyperbolic Cosine" : {
 
     },
@@ -76,10 +283,112 @@
     "Inverse Hyperbolic Tangent" : {
 
     },
+    "Joules" : {
+
+    },
+    "Kelvin" : {
+
+    },
+    "Kibibits" : {
+
+    },
+    "Kibibytes" : {
+
+    },
+    "Kilobits" : {
+
+    },
+    "Kilobytes" : {
+
+    },
+    "Kilocalories" : {
+
+    },
+    "Kilogram-force" : {
+
+    },
+    "Kilograms" : {
+
+    },
+    "Kilojoules" : {
+
+    },
+    "Kiloliters" : {
+
+    },
+    "Kilometers" : {
+
+    },
+    "Kilometers per Hour" : {
+
+    },
+    "Kilometers per Liter" : {
+
+    },
+    "Kilonewtons" : {
+
+    },
+    "Kilopascals" : {
+
+    },
+    "Kilowatt-hours" : {
+
+    },
+    "Kilowatts" : {
+
+    },
+    "Kips" : {
+
+    },
+    "Knots" : {
+
+    },
+    "Length" : {
+
+    },
+    "Light-years" : {
+
+    },
+    "Liters" : {
+
+    },
+    "Liters per 100km" : {
+
+    },
     "Log Base Ten" : {
 
     },
     "Log Base Two" : {
+
+    },
+    "Long Tons" : {
+
+    },
+    "Mach" : {
+
+    },
+    "Mebibits" : {
+
+    },
+    "Mebibytes" : {
+
+    },
+    "Megabits" : {
+
+    },
+    "Megabytes" : {
+
+    },
+    "Megajoules" : {
+
+    },
+    "Meganewtons" : {
+
+    },
+    "Megapascals" : {
+
+    },
+    "Megawatts" : {
 
     },
     "Memory Add" : {
@@ -94,13 +403,103 @@
     "Memory Subtract" : {
 
     },
+    "Menu" : {
+
+    },
+    "Meters" : {
+
+    },
+    "Meters per Second" : {
+
+    },
+    "Metric Horsepower" : {
+
+    },
+    "Metric Tons" : {
+
+    },
+    "Micrograms" : {
+
+    },
+    "Micrometers" : {
+
+    },
+    "Micronewtons" : {
+
+    },
+    "Microseconds" : {
+
+    },
+    "Miles" : {
+
+    },
+    "Miles per Gallon (UK)" : {
+
+    },
+    "Miles per Gallon (US)" : {
+
+    },
+    "Miles per Hour" : {
+
+    },
+    "Millibars" : {
+
+    },
+    "Milligrams" : {
+
+    },
+    "Milliliters" : {
+
+    },
+    "Millimeters" : {
+
+    },
+    "Millimeters of Mercury" : {
+
+    },
+    "Millinewtons" : {
+
+    },
+    "Milliradians" : {
+
+    },
+    "Milliseconds" : {
+
+    },
+    "Milliwatts" : {
+
+    },
+    "Mils" : {
+
+    },
+    "Minutes" : {
+
+    },
+    "Mode" : {
+
+    },
+    "Months (30-day)" : {
+
+    },
     "Multiply" : {
+
+    },
+    "Nanometers" : {
+
+    },
+    "Nanoseconds" : {
 
     },
     "Natural Logarithm" : {
 
     },
+    "Nautical Miles" : {
+
+    },
     "Negate" : {
+
+    },
+    "Newtons" : {
 
     },
     "Nine" : {
@@ -112,16 +511,52 @@
     "Open Parenthesis" : {
 
     },
+    "Ounces" : {
+
+    },
+    "Ounces-force" : {
+
+    },
+    "Parsecs" : {
+
+    },
+    "Pascals" : {
+
+    },
+    "Pebibytes" : {
+
+    },
     "Percent" : {
+
+    },
+    "Petabytes" : {
 
     },
     "Pi" : {
 
     },
+    "Poundals" : {
+
+    },
+    "Pounds" : {
+
+    },
+    "Pounds per Square Inch" : {
+
+    },
+    "Pounds-force" : {
+
+    },
     "Power" : {
 
     },
+    "Pressure" : {
+
+    },
     "Rad" : {
+
+    },
+    "Radians" : {
 
     },
     "Radians mode" : {
@@ -130,7 +565,13 @@
     "Random Number" : {
 
     },
+    "Rankine" : {
+
+    },
     "Reciprocal" : {
+
+    },
+    "Revolutions" : {
 
     },
     "Scientific Notation" : {
@@ -139,7 +580,16 @@
     "Second Function" : {
 
     },
+    "Seconds" : {
+
+    },
+    "Select Unit" : {
+
+    },
     "Seven" : {
+
+    },
+    "Short Tons" : {
 
     },
     "Sine" : {
@@ -148,7 +598,43 @@
     "Six" : {
 
     },
+    "Slugs" : {
+
+    },
+    "Speed" : {
+
+    },
+    "Speed of Light" : {
+
+    },
+    "Square Centimeters" : {
+
+    },
+    "Square Feet" : {
+
+    },
+    "Square Inches" : {
+
+    },
+    "Square Kilometers" : {
+
+    },
+    "Square Meters" : {
+
+    },
+    "Square Miles" : {
+
+    },
+    "Square Millimeters" : {
+
+    },
     "Square Root" : {
+
+    },
+    "Square Yards" : {
+
+    },
+    "Stones" : {
 
     },
     "Subtract" : {
@@ -163,16 +649,82 @@
     "Tangent" : {
 
     },
+    "Tebibits" : {
+
+    },
+    "Tebibytes" : {
+
+    },
+    "Temperature" : {
+
+    },
     "Ten to the Power of X" : {
 
     },
+    "Terabits" : {
+
+    },
+    "Terabytes" : {
+
+    },
+    "Therms" : {
+
+    },
     "Three" : {
+
+    },
+    "Time" : {
+
+    },
+    "Tons of Refrigeration" : {
+
+    },
+    "Torr" : {
+
+    },
+    "Troy Ounces" : {
 
     },
     "Two" : {
 
     },
     "Two to the Power of X" : {
+
+    },
+    "US Cups" : {
+
+    },
+    "US Fluid Ounces" : {
+
+    },
+    "US Gallons" : {
+
+    },
+    "US Pints" : {
+
+    },
+    "US Quarts" : {
+
+    },
+    "US Tablespoons" : {
+
+    },
+    "US Teaspoons" : {
+
+    },
+    "Volume" : {
+
+    },
+    "Watt-hours" : {
+
+    },
+    "Watts" : {
+
+    },
+    "Weeks" : {
+
+    },
+    "Weight" : {
 
     },
     "X Cubed" : {
@@ -182,6 +734,12 @@
 
     },
     "Y Root of X" : {
+
+    },
+    "Yards" : {
+
+    },
+    "Years (365-day)" : {
 
     },
     "Zero" : {

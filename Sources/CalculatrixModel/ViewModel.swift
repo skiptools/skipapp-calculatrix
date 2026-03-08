@@ -5,6 +5,13 @@ import OSLog
 /// A logger for the CalculatrixModel module.
 let logger: Logger = Logger(subsystem: "calculatrix.model", category: "CalculatrixModel")
 
+/// The calculator mode (basic, scientific, or convert).
+public enum CalculatorMode: String, Hashable {
+    case basic = "Basic"
+    case scientific = "Scientific"
+    case convert = "Convert"
+}
+
 /// The arithmetic operations supported by the calculator.
 public enum CalcOperation: String, Hashable {
     case add = "+"
@@ -39,6 +46,47 @@ public enum CalcOperation: String, Hashable {
     /// The depth of open parentheses.
     public var parenthesesDepth: Int = 0
 
+    // MARK: - Mode & Conversion State
+
+    /// The current calculator mode.
+    public var calculatorMode: CalculatorMode = .basic
+
+    /// Whether the mode menu overlay is visible.
+    public var isMenuVisible: Bool = false
+
+    /// The selected conversion category.
+    public var conversionCategory: ConversionCategory = .length
+
+    /// The source unit for conversion.
+    public var sourceUnit: ConversionUnit = defaultSourceUnit(for: .length)
+
+    /// The target unit for conversion.
+    public var targetUnit: ConversionUnit = defaultTargetUnit(for: .length)
+
+    /// Whether we are editing the source (true) or target (false) value.
+    public var isEditingSource: Bool = true
+
+    /// The source value text in conversion mode.
+    public var sourceText: String = "0"
+
+    /// The target value text in conversion mode.
+    public var targetText: String = "0"
+
+    /// Whether the unit picker sheet is visible.
+    public var isUnitPickerVisible: Bool = false
+
+    /// Whether we are picking the source (true) or target (false) unit.
+    public var isPickingSourceUnit: Bool = true
+
+    /// Whether the user is entering a new number in conversion mode.
+    private var conversionEnteringNumber: Bool = false
+
+    /// The pending arithmetic operation in conversion mode.
+    private var conversionPendingOperation: CalcOperation? = nil
+
+    /// The accumulator for arithmetic in conversion mode.
+    private var conversionAccumulator: Double = 0.0
+
     private var accumulator: Double = 0.0
     private var pendingOperation: CalcOperation? = nil
     private var isEnteringNumber: Bool = false
@@ -61,6 +109,10 @@ public enum CalcOperation: String, Hashable {
 
     /// Handle a digit button press (0-9).
     public func inputDigit(_ digit: Int) {
+        if calculatorMode == .convert {
+            inputConversionDigit(digit)
+            return
+        }
         if displayText == "Error" { inputClear() }
 
         if isEnteringNumber {
@@ -88,6 +140,10 @@ public enum CalcOperation: String, Hashable {
 
     /// Handle the decimal point button press.
     public func inputDecimal() {
+        if calculatorMode == .convert {
+            inputConversionDecimal()
+            return
+        }
         if displayText == "Error" { inputClear() }
 
         if !isEnteringNumber {
@@ -104,6 +160,10 @@ public enum CalcOperation: String, Hashable {
 
     /// Handle an arithmetic operation button press.
     public func inputOperation(_ operation: CalcOperation) {
+        if calculatorMode == .convert {
+            inputConversionOperation(operation)
+            return
+        }
         if displayText == "Error" { inputClear() }
 
         if (isEnteringNumber || justEvaluated) && pendingOperation != nil {
@@ -121,6 +181,10 @@ public enum CalcOperation: String, Hashable {
 
     /// Handle the equals button press.
     public func inputEquals() {
+        if calculatorMode == .convert {
+            inputConversionEquals()
+            return
+        }
         if displayText == "Error" { inputClear(); return }
 
         if pendingOperation != nil {
@@ -141,6 +205,10 @@ public enum CalcOperation: String, Hashable {
 
     /// Handle the clear / all-clear button press.
     public func inputClear() {
+        if calculatorMode == .convert {
+            inputConversionClear()
+            return
+        }
         if isAllClear {
             accumulator = 0.0
             pendingOperation = nil
@@ -161,6 +229,10 @@ public enum CalcOperation: String, Hashable {
 
     /// Handle the +/- (negate) button press.
     public func inputNegate() {
+        if calculatorMode == .convert {
+            inputConversionNegate()
+            return
+        }
         if displayText == "Error" { return }
 
         if !isEnteringNumber {
@@ -190,6 +262,10 @@ public enum CalcOperation: String, Hashable {
 
     /// Handle the percent button press.
     public func inputPercent() {
+        if calculatorMode == .convert {
+            inputConversionPercent()
+            return
+        }
         if displayText == "Error" { return }
 
         let current = displayValue
@@ -380,6 +456,241 @@ public enum CalcOperation: String, Hashable {
         isEnteringNumber = false
         justEvaluated = true
         isAllClear = false
+    }
+
+    // MARK: - Mode Switching
+
+    /// Switch the calculator mode.
+    public func setMode(_ mode: CalculatorMode) {
+        calculatorMode = mode
+        isMenuVisible = false
+        if mode == .convert {
+            sourceText = (displayText == "Error") ? "0" : displayText
+            conversionEnteringNumber = true
+            conversionPendingOperation = nil
+            conversionAccumulator = 0.0
+            activeOperation = nil
+            updateConversion()
+        }
+    }
+
+    // MARK: - Conversion Methods
+
+    /// Select a conversion category, resetting to default units.
+    public func selectCategory(_ category: ConversionCategory) {
+        conversionCategory = category
+        sourceUnit = defaultSourceUnit(for: category)
+        targetUnit = defaultTargetUnit(for: category)
+        updateConversion()
+    }
+
+    /// Select the source unit for conversion.
+    public func selectSourceUnit(_ unit: ConversionUnit) {
+        sourceUnit = unit
+        isUnitPickerVisible = false
+        updateConversion()
+    }
+
+    /// Select the target unit for conversion.
+    public func selectTargetUnit(_ unit: ConversionUnit) {
+        targetUnit = unit
+        isUnitPickerVisible = false
+        updateConversion()
+    }
+
+    /// Swap the source and target units and values.
+    public func swapUnits() {
+        let tempUnit = sourceUnit
+        sourceUnit = targetUnit
+        targetUnit = tempUnit
+        let tempText = sourceText
+        sourceText = targetText
+        targetText = tempText
+        isEditingSource = !isEditingSource
+    }
+
+    /// Recalculate the conversion based on current values and units.
+    public func updateConversion() {
+        if isEditingSource {
+            let value = Double(sourceText) ?? 0.0
+            let result = convertValue(value, from: sourceUnit, to: targetUnit)
+            targetText = CalculatorModel.formatNumber(result)
+        } else {
+            let value = Double(targetText) ?? 0.0
+            let result = convertValue(value, from: targetUnit, to: sourceUnit)
+            sourceText = CalculatorModel.formatNumber(result)
+        }
+    }
+
+    /// Handle digit input in conversion mode.
+    private func inputConversionDigit(_ digit: Int) {
+        if !conversionEnteringNumber {
+            // Starting a new number after an operation
+            if isEditingSource {
+                sourceText = "\(digit)"
+            } else {
+                targetText = "\(digit)"
+            }
+            conversionEnteringNumber = true
+        } else if isEditingSource {
+            if sourceText == "0" {
+                sourceText = "\(digit)"
+            } else {
+                let stripped = sourceText.replacingOccurrences(of: ".", with: "").replacingOccurrences(of: "-", with: "")
+                if stripped.count < 9 {
+                    sourceText = sourceText + "\(digit)"
+                }
+            }
+        } else {
+            if targetText == "0" {
+                targetText = "\(digit)"
+            } else {
+                let stripped = targetText.replacingOccurrences(of: ".", with: "").replacingOccurrences(of: "-", with: "")
+                if stripped.count < 9 {
+                    targetText = targetText + "\(digit)"
+                }
+            }
+        }
+        isAllClear = false
+        updateConversion()
+    }
+
+    /// Handle decimal input in conversion mode.
+    private func inputConversionDecimal() {
+        if !conversionEnteringNumber {
+            if isEditingSource {
+                sourceText = "0."
+            } else {
+                targetText = "0."
+            }
+            conversionEnteringNumber = true
+        } else if isEditingSource {
+            if !sourceText.contains(".") {
+                sourceText = sourceText + "."
+            }
+        } else {
+            if !targetText.contains(".") {
+                targetText = targetText + "."
+            }
+        }
+        isAllClear = false
+    }
+
+    /// Handle clear in conversion mode.
+    private func inputConversionClear() {
+        if isAllClear {
+            conversionAccumulator = 0.0
+            conversionPendingOperation = nil
+            activeOperation = nil
+        }
+        sourceText = "0"
+        targetText = "0"
+        conversionEnteringNumber = false
+        isAllClear = true
+    }
+
+    /// Handle negate in conversion mode.
+    private func inputConversionNegate() {
+        if isEditingSource {
+            if sourceText.hasPrefix("-") {
+                sourceText = String(sourceText.dropFirst())
+            } else if sourceText != "0" {
+                sourceText = "-" + sourceText
+            }
+        } else {
+            if targetText.hasPrefix("-") {
+                targetText = String(targetText.dropFirst())
+            } else if targetText != "0" {
+                targetText = "-" + targetText
+            }
+        }
+        updateConversion()
+    }
+
+    /// The current numeric value of the active conversion field.
+    private var conversionCurrentValue: Double {
+        return Double(isEditingSource ? sourceText : targetText) ?? 0.0
+    }
+
+    /// Set the active conversion field's text and update conversion.
+    private func setConversionText(_ value: Double) {
+        let text = CalculatorModel.formatNumber(value)
+        if isEditingSource {
+            sourceText = text
+        } else {
+            targetText = text
+        }
+        updateConversion()
+    }
+
+    /// Handle an arithmetic operation in conversion mode.
+    private func inputConversionOperation(_ operation: CalcOperation) {
+        if conversionEnteringNumber && conversionPendingOperation != nil {
+            performConversionCalculation()
+        } else {
+            conversionAccumulator = conversionCurrentValue
+        }
+        conversionPendingOperation = operation
+        activeOperation = operation
+        conversionEnteringNumber = false
+    }
+
+    /// Handle equals in conversion mode.
+    private func inputConversionEquals() {
+        if conversionPendingOperation != nil {
+            performConversionCalculation()
+            conversionPendingOperation = nil
+        }
+        activeOperation = nil
+        conversionEnteringNumber = false
+    }
+
+    /// Handle percent in conversion mode.
+    private func inputConversionPercent() {
+        let current = conversionCurrentValue
+        let value: Double
+        if conversionPendingOperation == .add || conversionPendingOperation == .subtract {
+            value = conversionAccumulator * current / 100.0
+        } else {
+            value = current / 100.0
+        }
+        setConversionText(value)
+        conversionEnteringNumber = false
+    }
+
+    /// Perform the pending arithmetic calculation in conversion mode.
+    private func performConversionCalculation() {
+        guard let operation = conversionPendingOperation else { return }
+        let operand = conversionCurrentValue
+        let result: Double
+        switch operation {
+        case .add:
+            result = conversionAccumulator + operand
+        case .subtract:
+            result = conversionAccumulator - operand
+        case .multiply:
+            result = conversionAccumulator * operand
+        case .divide:
+            if operand == 0.0 {
+                if isEditingSource {
+                    sourceText = "Error"
+                    targetText = "Error"
+                } else {
+                    targetText = "Error"
+                    sourceText = "Error"
+                }
+                return
+            }
+            result = conversionAccumulator / operand
+        case .power:
+            result = pow(conversionAccumulator, operand)
+        case .yRoot:
+            result = pow(conversionAccumulator, 1.0 / operand)
+        case .ee:
+            result = conversionAccumulator * pow(10.0, operand)
+        }
+        conversionAccumulator = result
+        setConversionText(result)
     }
 
     // MARK: - Internal Calculation
