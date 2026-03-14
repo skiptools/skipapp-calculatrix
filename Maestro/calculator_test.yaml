@@ -1,0 +1,27 @@
+appId: skip.Calculatrix
+---
+- launchApp
+
+# Tap 2
+- tapOn:
+    id: "digit-2"
+
+# Tap +
+- tapOn:
+    id: "add"
+
+# Tap 2
+- tapOn:
+    id: "digit-2"
+
+# Tap =
+- tapOn:
+    id: "equals"
+
+# Verify the display shows "4"
+- assertVisible:
+    id: "display"
+    text: "4"
+
+# Take a screenshot
+- takeScreenshot: Screenshot_00

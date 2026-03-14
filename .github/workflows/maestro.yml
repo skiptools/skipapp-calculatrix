@@ -1,0 +1,112 @@
+name: Maestro UI Tests
+
+on:
+  push:
+    branches: [ '*' ]
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  maestro-tests:
+    runs-on: macos-15-intel
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Skip
+        run: brew install skiptools/skip/skip
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      # --- iOS: build and boot simulator ---
+
+      - name: Boot iOS Simulator
+        run: |
+          RUNTIME=$(xcrun simctl list runtimes -j | python3 -c "
+          import json, sys
+          runtimes = json.load(sys.stdin)['runtimes']
+          ios = [r for r in runtimes if r['isAvailable'] and r['platform'] == 'iOS']
+          print(ios[-1]['identifier'] if ios else '')
+          ")
+          DEVICE_TYPE="com.apple.CoreSimulator.SimDeviceType.iPhone-16"
+          UDID=$(xcrun simctl create "MaestroTest" "$DEVICE_TYPE" "$RUNTIME")
+          echo "IOS_DEVICE=$UDID" >> $GITHUB_ENV
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+
+      - name: Build iOS app
+        run: |
+          xcodebuild \
+            -project Darwin/Calculatrix.xcodeproj \
+            -scheme "Calculatrix App" \
+            -destination "platform=iOS Simulator,id=$IOS_DEVICE" \
+            -skipPackagePluginValidation \
+            -derivedDataPath .build/DerivedData \
+            build \
+            SKIP_ACTION=none \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="-" | xcbeautify || true
+
+      - name: Install iOS app
+        run: |
+          APP_PATH=$(find .build/DerivedData -name "*.app" -path "*/Debug-iphonesimulator/*" -not -path "*/PackageFrameworks/*" | head -1)
+          echo "Installing $APP_PATH"
+          xcrun simctl install "$IOS_DEVICE" "$APP_PATH"
+
+      # --- Android: build and boot emulator ---
+
+      - name: Set up Android Emulator
+        run: |
+          sdkmanager --install "system-images;android-35;google_apis;x86_64" "emulator"
+          echo "no" | avdmanager create avd -n maestro_avd -k "system-images;android-35;google_apis;x86_64" --force
+
+      - name: Start Android Emulator
+        run: |
+          $ANDROID_HOME/emulator/emulator -avd maestro_avd -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
+          adb wait-for-device
+          adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
+          adb shell input keyevent 82
+          echo "ANDROID_DEVICE=$(adb devices | grep -w 'device$' | head -1 | awk '{print $1}')" >> $GITHUB_ENV
+
+      - name: Build and install Android app
+        run: |
+          cd Android
+          skip gradle -PskipAction=none assembleDebug
+          cd ..
+          APK=$(find .build/Android -name "*.apk" -path "*/debug/*" | head -1)
+          echo "Installing $APK"
+          adb install "$APK"
+
+      # --- Run Maestro tests ---
+
+      - name: Run Maestro tests
+        run: Maestro/run_tests.sh
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-screenshots
+          path: |
+            Maestro/screenshots-ios/
+            Maestro/screenshots-android/
+
+      - name: Shutdown simulators
+        if: always()
+        run: |
+          xcrun simctl shutdown "$IOS_DEVICE" || true
+          adb emu kill || true
