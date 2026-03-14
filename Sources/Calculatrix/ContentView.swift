@@ -614,6 +614,8 @@ struct ContentView: View {
                     .minimumScaleFactor(0.3)
                     .lineLimit(1)
                     .onTapGesture { calculator.isEditingSource = true }
+                    .accessibilityIdentifier("source-display")
+                    .accessibilityLabel(calculator.sourceText)
             }
             .padding(.horizontal, spacing)
 
@@ -634,6 +636,8 @@ struct ContentView: View {
             }
             .buttonStyle(.plain)
             .padding(.horizontal, spacing)
+            .accessibilityIdentifier("source-unit")
+            .accessibilityLabel(unitName(for: calculator.sourceUnit))
 
             // Swap button
             HStack {
@@ -646,6 +650,8 @@ struct ContentView: View {
                         .foregroundStyle(.orange)
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("swap-units")
+                .accessibilityLabel("Swap Units")
             }
             .padding(.horizontal, spacing)
 
@@ -659,6 +665,8 @@ struct ContentView: View {
                     .minimumScaleFactor(0.3)
                     .lineLimit(1)
                     .onTapGesture { calculator.isEditingSource = false }
+                    .accessibilityIdentifier("target-display")
+                    .accessibilityLabel(calculator.targetText)
             }
             .padding(.horizontal, spacing)
 
@@ -680,6 +688,8 @@ struct ContentView: View {
             .buttonStyle(.plain)
             .padding(.horizontal, spacing)
             .padding(.bottom, 8)
+            .accessibilityIdentifier("target-unit")
+            .accessibilityLabel(unitName(for: calculator.targetUnit))
 
             // Row 1: AC/C, ±, %, ÷
             HStack(spacing: spacing) {
@@ -691,6 +701,8 @@ struct ContentView: View {
                 ) {
                     calculator.inputClear()
                 }
+                .accessibilityIdentifier("clear")
+                .accessibilityLabel(calculator.isAllClear ? "All Clear" : "Clear")
 
                 CalculatorButton(
                     label: "±",
@@ -700,6 +712,8 @@ struct ContentView: View {
                 ) {
                     calculator.inputNegate()
                 }
+                .accessibilityIdentifier("negate")
+                .accessibilityLabel("Negate")
 
                 CalculatorButton(
                     label: "%",
@@ -709,6 +723,8 @@ struct ContentView: View {
                 ) {
                     calculator.inputPercent()
                 }
+                .accessibilityIdentifier("percent")
+                .accessibilityLabel("Percent")
 
                 CalcOperationButton(
                     operation: .divide,
@@ -718,13 +734,21 @@ struct ContentView: View {
                 ) {
                     calculator.inputOperation(.divide)
                 }
+                .accessibilityIdentifier("divide")
+                .accessibilityLabel("Divide")
             }
 
             // Row 2: 7, 8, 9, ×
             HStack(spacing: spacing) {
                 DigitButton(digit: 7, size: buttonSize) { calculator.inputDigit(7) }
+                    .accessibilityIdentifier("digit-7")
+                    .accessibilityLabel("Seven")
                 DigitButton(digit: 8, size: buttonSize) { calculator.inputDigit(8) }
+                    .accessibilityIdentifier("digit-8")
+                    .accessibilityLabel("Eight")
                 DigitButton(digit: 9, size: buttonSize) { calculator.inputDigit(9) }
+                    .accessibilityIdentifier("digit-9")
+                    .accessibilityLabel("Nine")
                 CalcOperationButton(
                     operation: .multiply,
                     label: "×",
@@ -733,13 +757,21 @@ struct ContentView: View {
                 ) {
                     calculator.inputOperation(.multiply)
                 }
+                .accessibilityIdentifier("multiply")
+                .accessibilityLabel("Multiply")
             }
 
             // Row 3: 4, 5, 6, −
             HStack(spacing: spacing) {
                 DigitButton(digit: 4, size: buttonSize) { calculator.inputDigit(4) }
+                    .accessibilityIdentifier("digit-4")
+                    .accessibilityLabel("Four")
                 DigitButton(digit: 5, size: buttonSize) { calculator.inputDigit(5) }
+                    .accessibilityIdentifier("digit-5")
+                    .accessibilityLabel("Five")
                 DigitButton(digit: 6, size: buttonSize) { calculator.inputDigit(6) }
+                    .accessibilityIdentifier("digit-6")
+                    .accessibilityLabel("Six")
                 CalcOperationButton(
                     operation: .subtract,
                     label: "−",
@@ -748,13 +780,21 @@ struct ContentView: View {
                 ) {
                     calculator.inputOperation(.subtract)
                 }
+                .accessibilityIdentifier("subtract")
+                .accessibilityLabel("Subtract")
             }
 
             // Row 4: 1, 2, 3, +
             HStack(spacing: spacing) {
                 DigitButton(digit: 1, size: buttonSize) { calculator.inputDigit(1) }
+                    .accessibilityIdentifier("digit-1")
+                    .accessibilityLabel("One")
                 DigitButton(digit: 2, size: buttonSize) { calculator.inputDigit(2) }
+                    .accessibilityIdentifier("digit-2")
+                    .accessibilityLabel("Two")
                 DigitButton(digit: 3, size: buttonSize) { calculator.inputDigit(3) }
+                    .accessibilityIdentifier("digit-3")
+                    .accessibilityLabel("Three")
                 CalcOperationButton(
                     operation: .add,
                     label: "+",
@@ -763,6 +803,8 @@ struct ContentView: View {
                 ) {
                     calculator.inputOperation(.add)
                 }
+                .accessibilityIdentifier("add")
+                .accessibilityLabel("Add")
             }
 
             // Row 5: Menu, 0, ., =
@@ -775,6 +817,8 @@ struct ContentView: View {
                 ) {
                     calculator.isMenuVisible = true
                 }
+                .accessibilityIdentifier("menu")
+                .accessibilityLabel("Menu")
 
                 CalculatorButton(
                     label: "0",
@@ -784,6 +828,8 @@ struct ContentView: View {
                 ) {
                     calculator.inputDigit(0)
                 }
+                .accessibilityIdentifier("digit-0")
+                .accessibilityLabel("Zero")
 
                 CalculatorButton(
                     label: ".",
@@ -793,6 +839,8 @@ struct ContentView: View {
                 ) {
                     calculator.inputDecimal()
                 }
+                .accessibilityIdentifier("decimal")
+                .accessibilityLabel("Decimal")
 
                 CalculatorButton(
                     label: "=",
@@ -802,6 +850,8 @@ struct ContentView: View {
                 ) {
                     calculator.inputEquals()
                 }
+                .accessibilityIdentifier("equals")
+                .accessibilityLabel("Equals")
             }
         }
         .padding(spacing)
@@ -819,6 +869,8 @@ struct ModeMenuView: View {
                 .font(.headline)
                 .foregroundStyle(.white)
                 .padding(.bottom, 12)
+                .accessibilityIdentifier("mode-title")
+                .accessibilityLabel("Mode")
 
             ModeOptionButton(
                 label: "Basic",
@@ -826,6 +878,8 @@ struct ModeMenuView: View {
             ) {
                 calculator.setMode(.basic)
             }
+            .accessibilityIdentifier("mode-basic")
+            .accessibilityLabel("Basic")
 
             ModeOptionButton(
                 label: "Scientific",
@@ -833,6 +887,8 @@ struct ModeMenuView: View {
             ) {
                 calculator.setMode(.scientific)
             }
+            .accessibilityIdentifier("mode-scientific")
+            .accessibilityLabel("Scientific")
 
             ModeOptionButton(
                 label: "Convert",
@@ -840,6 +896,8 @@ struct ModeMenuView: View {
             ) {
                 calculator.setMode(.convert)
             }
+            .accessibilityIdentifier("mode-convert")
+            .accessibilityLabel("Convert")
         }
         .padding(24)
         .background(Color(red: 0.15, green: 0.15, blue: 0.15))
@@ -849,7 +907,7 @@ struct ModeMenuView: View {
 }
 
 struct ModeOptionButton: View {
-    let label: String
+    let label: LocalizedStringKey
     let isSelected: Bool
     let action: () -> Void
 
@@ -886,12 +944,16 @@ struct UnitPickerView: View {
                 Text("Select Unit")
                     .font(.headline)
                     .foregroundStyle(.white)
+                    .accessibilityIdentifier("unit-picker-title")
+                    .accessibilityLabel("Select Unit")
                 Spacer()
                 Button("Done") {
                     calculator.isUnitPickerVisible = false
                 }
                 .foregroundStyle(.orange)
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("unit-picker-done")
+                .accessibilityLabel("Done")
             }
             .padding()
 
@@ -918,6 +980,8 @@ struct UnitPickerView: View {
                                 .clipShape(Capsule())
                         }
                         .buttonStyle(.plain)
+                        .accessibilityIdentifier("category-\(categoryIdentifier(for: category))")
+                        .accessibilityLabel(categoryName(for: category))
                     }
                 }
                 .padding(.horizontal)
@@ -956,6 +1020,8 @@ struct UnitPickerView: View {
                             .background(Color(red: 0.1, green: 0.1, blue: 0.1))
                         }
                         .buttonStyle(.plain)
+                        .accessibilityIdentifier("unit-\(unitAbbreviation(for: unit))")
+                        .accessibilityLabel(unitName(for: unit))
                     }
                 }
             }
@@ -1106,6 +1172,26 @@ func categoryName(for category: ConversionCategory) -> LocalizedStringKey {
     case .time: return "Time"
     case .volume: return "Volume"
     case .weight: return "Weight"
+    }
+}
+
+/// Returns the identifier string for a conversion category.
+func categoryIdentifier(for category: ConversionCategory) -> String {
+    switch category {
+    case .angles: return "angles"
+    case .area: return "area"
+    case .data: return "data"
+    case .energy: return "energy"
+    case .force: return "force"
+    case .fuel: return "fuel"
+    case .length: return "length"
+    case .power: return "power"
+    case .pressure: return "pressure"
+    case .speed: return "speed"
+    case .temperature: return "temperature"
+    case .time: return "time"
+    case .volume: return "volume"
+    case .weight: return "weight"
     }
 }
 

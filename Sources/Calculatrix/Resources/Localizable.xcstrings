@@ -55,6 +55,9 @@
     "Bars" : {
 
     },
+    "Basic" : {
+
+    },
     "Bits" : {
 
     },
@@ -89,6 +92,9 @@
 
     },
     "Close Parenthesis" : {
+
+    },
+    "Convert" : {
 
     },
     "Cosine" : {
@@ -574,6 +580,9 @@
     "Revolutions" : {
 
     },
+    "Scientific" : {
+
+    },
     "Scientific Notation" : {
 
     },
@@ -638,6 +647,9 @@
 
     },
     "Subtract" : {
+
+    },
+    "Swap Units" : {
 
     },
     "Switch to Degrees" : {

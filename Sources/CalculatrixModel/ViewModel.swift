@@ -6,10 +6,10 @@ import OSLog
 let logger: Logger = Logger(subsystem: "calculatrix.model", category: "CalculatrixModel")
 
 /// The calculator mode (basic, scientific, or convert).
-public enum CalculatorMode: String, Hashable {
-    case basic = "Basic"
-    case scientific = "Scientific"
-    case convert = "Convert"
+public enum CalculatorMode: Hashable {
+    case basic
+    case scientific
+    case convert
 }
 
 /// The arithmetic operations supported by the calculator.
