@@ -29,8 +29,9 @@ jobs:
 
       - name: Install Maestro
         run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+          #curl -Ls "https://get.maestro.mobile.dev" | bash
+          #echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+          brew install mobile-dev-inc/tap/maestro
 
       # ===== iOS: build, test all locales, then shut down =====
 
@@ -50,6 +51,7 @@ jobs:
 
       - name: Build iOS app
         run: |
+          set -o pipefail
           xcodebuild \
             -project Darwin/Calculatrix.xcodeproj \
             -scheme "Calculatrix App" \
@@ -59,13 +61,24 @@ jobs:
             build \
             SKIP_ACTION=none \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="-" | xcbeautify || true
+            CODE_SIGN_IDENTITY="-" 2>&1 | tee /tmp/xcodebuild.log | tail -50
+          # Verify the build actually produced an app
+          APP_PATH=$(find .build/DerivedData -name "*.app" -path "*/Debug-iphonesimulator/*" -not -path "*/PackageFrameworks/*" | head -1)
+          if [ -z "$APP_PATH" ]; then
+            echo "ERROR: No .app bundle found after build" >&2
+            tail -100 /tmp/xcodebuild.log
+            exit 1
+          fi
+          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
 
       - name: Install iOS app
         run: |
-          APP_PATH=$(find .build/DerivedData -name "*.app" -path "*/Debug-iphonesimulator/*" -not -path "*/PackageFrameworks/*" | head -1)
           echo "Installing $APP_PATH"
           xcrun simctl install "$IOS_DEVICE" "$APP_PATH"
+          # Verify install by launching and immediately terminating
+          xcrun simctl launch "$IOS_DEVICE" skip.Calculatrix
+          sleep 3
+          xcrun simctl terminate "$IOS_DEVICE" skip.Calculatrix || true
 
       - name: Run Maestro tests (iOS)
         run: Maestro/run_tests.sh --platform ios
@@ -94,8 +107,16 @@ jobs:
           skip gradle -PskipAction=none assembleDebug
           cd ..
           APK=$(find .build/Android -name "*.apk" -path "*/debug/*" | head -1)
+          if [ -z "$APK" ]; then
+            echo "ERROR: No APK found after build" >&2
+            exit 1
+          fi
           echo "Installing $APK"
           adb install "$APK"
+          # Verify install by launching and terminating
+          adb shell am start -n skip.Calculatrix/calculatrix.module.MainActivity
+          sleep 5
+          adb shell am force-stop skip.Calculatrix
 
       - name: Run Maestro tests (Android)
         run: Maestro/run_tests.sh --platform android

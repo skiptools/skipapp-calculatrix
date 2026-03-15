@@ -2,6 +2,10 @@ appId: skip.Calculatrix
 ---
 - launchApp
 
+# Wait for the calculator UI to fully render
+- assertVisible:
+    id: "display"
+
 # Tap 2
 - tapOn:
     id: "digit-2"
