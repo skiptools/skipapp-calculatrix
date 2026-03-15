@@ -6,6 +6,24 @@ on:
   workflow_dispatch:
   pull_request:
 
+inputs:
+  emulator-api-level:
+    required: false
+    type: string
+    default: '35'
+  emulator-channel:
+    required: false
+    type: string
+    default: 'stable'
+  emulator-profile:
+    required: false
+    type: string
+    default: 'medium_phone'
+  emulator-target:
+    required: false
+    type: string
+    default: 'default'
+
 jobs:
   maestro-tests:
     runs-on: macos-15-intel
@@ -78,19 +96,11 @@ jobs:
         if: always()
         run: xcrun simctl shutdown "$IOS_DEVICE" || true
 
-      # ===== Android: boot emulator, build, test all locales, then shut down =====
-
-      - name: Set up Android Emulator
+      - name: Create and Launch Android Emulator
         run: |
-          sdkmanager --install "system-images;android-35;google_apis;x86_64" "emulator"
-          echo "no" | avdmanager create avd -n maestro_avd -k "system-images;android-35;google_apis;x86_64" --force
-
-      - name: Start Android Emulator
-        run: |
-          $ANDROID_HOME/emulator/emulator -avd maestro_avd -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
-          adb wait-for-device
-          adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
-          adb shell input keyevent 82
+          skip android emulator create --android-api-level="${{ inputs.emulator-api-level }}" --device-profile="${{ inputs.emulator-profile }}" --verbose
+          skip android emulator list --verbose
+          skip android emulator launch --background --verbose
 
       - name: Build and install Android app
         run: |
