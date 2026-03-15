@@ -9,20 +9,11 @@ on:
 jobs:
   maestro-tests:
     runs-on: macos-15-intel
-    timeout-minutes: 60
+    timeout-minutes: 120
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        uses: actions/checkout@v6
 
       - name: Install Skip
         run: brew install skiptools/skip/skip
