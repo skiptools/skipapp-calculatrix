@@ -2,27 +2,9 @@ name: Maestro UI Tests
 
 on:
   push:
-    branches: ['*']
+    branches: ['main']
   workflow_dispatch:
   pull_request:
-  workflow_call:
-    inputs:
-      emulator-api-level:
-        required: false
-        type: string
-        default: '35'
-      emulator-channel:
-        required: false
-        type: string
-        default: 'stable'
-      emulator-profile:
-        required: false
-        type: string
-        default: 'medium_phone'
-      emulator-target:
-        required: false
-        type: string
-        default: 'default'
 
 jobs:
   maestro-tests:
@@ -98,7 +80,7 @@ jobs:
 
       - name: Create and Launch Android Emulator
         run: |
-          skip android emulator create --android-api-level="${{ inputs.emulator-api-level }}" --device-profile="${{ inputs.emulator-profile }}" --verbose
+          skip android emulator create --android-api-level="35" --device-profile="medium_phone" --verbose
           skip android emulator list --verbose
           skip android emulator launch --background --verbose
 
