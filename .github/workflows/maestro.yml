@@ -9,7 +9,7 @@ on:
 jobs:
   maestro-tests:
     runs-on: macos-15-intel
-    timeout-minutes: 120
+    timeout-minutes: 180
 
     steps:
       - name: Checkout
