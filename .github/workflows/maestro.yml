@@ -79,10 +79,25 @@ jobs:
         run: xcrun simctl shutdown "$IOS_DEVICE" || true
 
       - name: Create and Launch Android Emulator
+        if: false # TODO: debug failure to tests to run on Skip-created emulator
         run: |
           skip android emulator create --android-api-level="35" --device-profile="medium_phone" --verbose
           skip android emulator list --verbose
           skip android emulator launch --background --verbose
+
+      - name: Set up Android Emulator
+        run: |
+          sdkmanager --install "system-images;android-35;google_apis;x86_64" "emulator"
+          echo "no" | avdmanager create avd -n maestro_avd -k "system-images;android-35;google_apis;x86_64" --force
+
+      - name: Start Android Emulator
+        run: |
+          $ANDROID_HOME/emulator/emulator -avd maestro_avd -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
+          adb wait-for-device
+          adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
+          adb shell input keyevent 82
+          echo "ANDROID_DEVICE=$(adb devices | grep -w 'device$' | head -1 | awk '{print $1}')" >> $GITHUB_ENV
+
 
       - name: Build and install Android app
         run: |
