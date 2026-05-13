@@ -1,1 +1,4 @@
-New features and better performance.
+- Three modes: basic, scientific, and unit conversion
+- Convert units across 14 categories
+- Real-number engine for accurate chained calculations
+- Improved accessibility labels and localizations

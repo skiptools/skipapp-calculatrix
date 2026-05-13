@@ -15,6 +15,5 @@ permissions:
 
 jobs:
   call-workflow:
-    uses: skiptools/actions/.github/workflows/skip-app.yml@attestations
-    #uses: skiptools/actions/.github/workflows/skip-app.yml@v1
+    uses: skiptools/actions/.github/workflows/skip-app.yml@v1
 

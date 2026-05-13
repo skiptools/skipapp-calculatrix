@@ -1,1 +1,18 @@
-A great new app built with Skip!
+Calculatrix is a fast, free, no-ads calculator and unit converter for iPhone and iPad.
+
+Three calculators in one app:
+
+BASIC CALCULATOR
+A classic four-function keypad with add, subtract, multiply, divide, percent, and sign-change keys. The clean portrait layout keeps every operation one tap away.
+
+SCIENTIFIC CALCULATOR
+Rotate to landscape for a full scientific keypad: trigonometric and inverse trigonometric functions (sin, cos, tan and their inverses), hyperbolic functions (sinh, cosh, tanh), natural and base-10 logarithms, exponentials (eˣ, 10ˣ, 2ˣ), powers and roots (xʸ, ʸ√x, x², x³, √x, ³√x), factorial, and the mathematical constants π and e.
+
+UNIT CONVERTER
+Convert between units across 14 categories: angles, area, data storage, energy, force, fuel economy, length, power, pressure, speed, temperature, time, volume, and weight.
+
+ACCURATE CALCULATIONS
+Calculatrix uses a true real-number engine rather than floating-point arithmetic, so chained operations and conversions stay exact without accumulating rounding errors.
+
+PRIVACY-FIRST
+Calculatrix collects no personal data, contains no ads, and requires no account. It is open source and built with Skip, the dual-platform SwiftUI framework.

@@ -1,1 +1,1 @@
-A great new app built with Skip!
+Scientific calculator and unit converter with accurate real-number math.

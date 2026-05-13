@@ -1,1 +1,1 @@
-app,key,words
+calculator,scientific,unit,converter,math,trigonometry,logarithm,science
