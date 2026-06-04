@@ -1,0 +1,135 @@
+name: Maestro UI Tests
+
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  maestro-tests:
+    runs-on: macos-15-intel
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Skip
+        run: brew install skiptools/skip/skip
+
+      - name: Install Maestro
+        run: |
+          #curl -Ls "https://get.maestro.mobile.dev" | bash
+          #echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+          brew install mobile-dev-inc/tap/maestro
+
+      # ===== iOS: build, test all locales, then shut down =====
+
+      - name: Boot iOS Simulator
+        run: |
+          RUNTIME=$(xcrun simctl list runtimes -j | python3 -c "
+          import json, sys
+          runtimes = json.load(sys.stdin)['runtimes']
+          ios = [r for r in runtimes if r['isAvailable'] and r['platform'] == 'iOS']
+          print(ios[-1]['identifier'] if ios else '')
+          ")
+          DEVICE_TYPE="com.apple.CoreSimulator.SimDeviceType.iPhone-16"
+          UDID=$(xcrun simctl create "MaestroTest" "$DEVICE_TYPE" "$RUNTIME")
+          echo "IOS_DEVICE=$UDID" >> $GITHUB_ENV
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+
+      - name: Build iOS app
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project Darwin/Calculatrix.xcodeproj \
+            -scheme "Calculatrix App" \
+            -destination "platform=iOS Simulator,id=$IOS_DEVICE" \
+            -skipPackagePluginValidation \
+            -derivedDataPath .build/DerivedData \
+            build \
+            SKIP_ACTION=none \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="-" 2>&1 | tee /tmp/xcodebuild.log | tail -50
+          # Verify the build actually produced an app
+          APP_PATH=$(find .build/DerivedData -name "*.app" -path "*/Debug-iphonesimulator/*" -not -path "*/PackageFrameworks/*" | head -1)
+          if [ -z "$APP_PATH" ]; then
+            echo "ERROR: No .app bundle found after build" >&2
+            tail -100 /tmp/xcodebuild.log
+            exit 1
+          fi
+          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
+
+      - name: Install iOS app
+        run: |
+          echo "Installing $APP_PATH"
+          xcrun simctl install "$IOS_DEVICE" "$APP_PATH"
+          # Verify install by launching and immediately terminating
+          xcrun simctl launch "$IOS_DEVICE" skip.Calculatrix
+          sleep 3
+          xcrun simctl terminate "$IOS_DEVICE" skip.Calculatrix || true
+
+      - name: Run Maestro tests (iOS)
+        run: Maestro/run_tests.sh --platform ios
+
+      - name: Shutdown iOS Simulator
+        if: always()
+        run: xcrun simctl shutdown "$IOS_DEVICE" || true
+
+      - name: Create and Launch Android Emulator
+        if: false # TODO: debug failure to tests to run on Skip-created emulator
+        run: |
+          skip android emulator create --android-api-level="35" --device-profile="medium_phone" --verbose
+          skip android emulator list --verbose
+          skip android emulator launch --background --verbose
+
+      - name: Set up Android Emulator
+        run: |
+          sdkmanager --install "system-images;android-35;google_apis;x86_64" "emulator"
+          echo "no" | avdmanager create avd -n maestro_avd -k "system-images;android-35;google_apis;x86_64" --force
+
+      - name: Start Android Emulator
+        run: |
+          $ANDROID_HOME/emulator/emulator -avd maestro_avd -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
+          adb wait-for-device
+          adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
+          adb shell input keyevent 82
+          echo "ANDROID_DEVICE=$(adb devices | grep -w 'device$' | head -1 | awk '{print $1}')" >> $GITHUB_ENV
+
+
+      - name: Build and install Android app
+        run: |
+          cd Android
+          skip gradle -PskipAction=none assembleDebug
+          cd ..
+          APK=$(find .build/Android -name "*.apk" -path "*/debug/*" | head -1)
+          if [ -z "$APK" ]; then
+            echo "ERROR: No APK found after build" >&2
+            exit 1
+          fi
+          echo "Installing $APK"
+          adb install "$APK"
+          # Verify install by launching and terminating
+          adb shell am start -n skip.Calculatrix/calculatrix.module.MainActivity
+          sleep 5
+          adb shell am force-stop skip.Calculatrix
+
+      - name: Run Maestro tests (Android)
+        run: Maestro/run_tests.sh --platform android
+
+      - name: Shutdown Android Emulator
+        if: always()
+        run: adb emu kill || true
+
+      # ===== Upload all screenshots =====
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-screenshots
+          path: |
+            Maestro/screenshots-ios/
+            Maestro/screenshots-android/
